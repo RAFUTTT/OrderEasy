@@ -1,85 +1,77 @@
-import React, { useEffect } from 'react';
-import './estadisticas.css';
+import React from 'react';
+import { Bar } from 'react-chartjs-2';
+import 'chart.js/auto'; // Importante para que Chart.js funcione correctamente
 
 const Estadisticas = () => {
-  useEffect(() => {
-    const menuItems = document.querySelectorAll('.menu-item');
-    menuItems.forEach(item => {
-      item.addEventListener('click', function () {
-        menuItems.forEach(i => i.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
+  // Datos para el gráfico de barras de productos vendidos
+  const productData = {
+    labels: ['Producto A', 'Producto B', 'Producto C', 'Producto D', 'Producto E'],
+    datasets: [
+      {
+        label: 'Ventas de Productos',
+        data: [12, 19, 3, 5, 2],  // Datos de ventas por producto
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
 
-    const buttons = document.querySelectorAll('.button');
-    buttons.forEach(button => {
-      button.addEventListener('click', function () {
-        alert('Funcionalidad en desarrollo: ' + this.textContent);
-      });
-    });
-  }, []);
-
-  // Datos de ejemplo para las filas de la tabla
-  const rows = [
-    { fecha: '2024-09-01', producto: 'Producto A', valor: '$100' },
-    { fecha: '2024-09-02', producto: 'Producto B', valor: '$150' },
-    { fecha: '2024-09-03', producto: 'Producto C', valor: '$200' },
-    // Puedes agregar más filas aquí según sea necesario
-  ];
+  // Datos para el gráfico de comparación de categorías
+  const categoryData = {
+    labels: ['Electrónica', 'Ropa', 'Hogar', 'Deportes', 'Libros'],
+    datasets: [
+      {
+        label: 'Categorías',
+        data: [15, 9, 13, 7, 5],
+        backgroundColor: [
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+        ],
+        borderColor: [
+          'rgba(75, 192, 192, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
 
   return (
-    <div className="container">
-      {/* Main Content */}
-      <div className="main-content">
-        <div className="dashboard-card">
-          <div className="balance-row">
-            <div className="balance-item">
-              <h3>Balance General</h3>
-              <p>$0</p>
-            </div>
-            <div className="balance-item">
-              <h3>Ingresos Totales</h3>
-              <p>$0</p>
-            </div>
-            <div className="balance-item">
-              <h3>Egresos Totales</h3>
-              <p>$0</p>
-            </div>
-          </div>
+    <div className='mainContent'>
+      <h1>Estadísticas</h1>
 
-          <div className="button-row">
-            <button className="button button-green">Nueva Venta</button>
-            <button className="button button-red">Nuevo Gasto</button>
-          </div>
+      {/* Gráfico de ventas de productos */}
+      <div className='chartContainer'>
+        <h2>Ventas de Productos</h2>
+        <Bar data={productData} />
+      </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Producto</th>
-                <th>Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.length === 0 ? (
-                <tr>
-                  <td colSpan="3">No hay datos disponibles</td>
-                </tr>
-              ) : (
-                rows.map((row, index) => (
-                  <tr key={index}>
-                    <td>{row.fecha}</td>
-                    <td>{row.producto}</td>
-                    <td>{row.valor}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+      {/* Gráfico de comparación de categorías */}
+      <div className='chartContainer'>
+        <h2>Comparación de Categorías</h2>
+        <Bar data={categoryData} />
       </div>
     </div>
   );
-};
+}
 
 export default Estadisticas;

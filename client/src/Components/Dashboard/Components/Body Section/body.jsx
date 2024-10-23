@@ -1,15 +1,14 @@
 import React from 'react';
 import './body.css';
-import video from '../../../../LoginAssets/video.mp4'
+import Top from './Top Section/Top.jsx'
+import Listing from './Listing Section/Listing.jsx';
 const BodySection = () => {
   return (
-    <div className="body-section">
-      <div className="hero-image">
-       
-        <video src={video} autoPlay muted loop></video>
-        <p className="hero-text">¡Descubre la forma más cómoda y segura de comprar productos tecnológicos con nuestra página web!</p>
+    <div className="mainContent">
+      <Top/>
+      <div className="bottom flex">
+        <Listing/>
       </div>
-      {/* Resto del contenido del dashboard */}
     </div>
   );
 };

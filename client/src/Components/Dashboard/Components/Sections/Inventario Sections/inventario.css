@@ -1,4 +1,9 @@
+<<<<<<< Updated upstream
 body, html {
+=======
+body,
+html {
+>>>>>>> Stashed changes
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
@@ -49,7 +54,11 @@ body, html {
 }
 
 .create-product {
+<<<<<<< Updated upstream
   background-color: #4CAF50;
+=======
+  background-color: #4caf50;
+>>>>>>> Stashed changes
   color: white;
   border: none;
   padding: 10px 20px;
@@ -62,7 +71,12 @@ body, html {
   align-items: center;
 }
 
+<<<<<<< Updated upstream
 .search-bar select, .search-bar input {
+=======
+.search-bar select,
+.search-bar input {
+>>>>>>> Stashed changes
   padding: 10px;
   margin-right: 10px;
   border: 1px solid #ddd;
