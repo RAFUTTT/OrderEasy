@@ -23,9 +23,6 @@ const App = () => {
 
         {/* Ruta para el Dashboard, sin protección de autenticación */}
         <Route path="/dashboard/*" element={<Dashboard />} />
-
-        {/* Ruta comodín que redirige al login */}
-        <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );

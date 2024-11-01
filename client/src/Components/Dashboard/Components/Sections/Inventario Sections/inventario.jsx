@@ -1,32 +1,11 @@
-import React, { useEffect } from "react";
-import './inventario.scss';
+import React, { useEffect, useState } from "react";
+import './inventario.css';
 
 const Inventario = () => {
-  useEffect(() => {
-    // Función para manejar el clic en "Crear Producto"
-    const createProductButton = document.querySelector(".create-product");
-    createProductButton.addEventListener("click", () => {
-      alert("Funcionalidad de crear producto aún no implementada");
-    });
-
-    // Función para manejar la activación de los elementos del menú
-    const menuItems = document.querySelectorAll(".menu-item");
-    menuItems.forEach((item) => {
-      item.addEventListener("click", (e) => {
-        e.preventDefault();
-        menuItems.forEach((i) => i.classList.remove("active"));
-        item.classList.add("active");
-      });
-    });
-
-    // Cleanup de los event listeners
-    return () => {
-      createProductButton.removeEventListener("click", () => {});
-      menuItems.forEach((item) => {
-        item.removeEventListener("click", () => {});
-      });
-    };
-  }, []);
+  // Controla la visibilidad de los modales
+  const [isModalProductoOpen, setIsModalProductoOpen] = useState(false);
+  const [isModalCategoriaOpen, setIsModalCategoriaOpen] = useState(false);
+  const [modalClass, setModalClass] = useState('');
 
   // Datos de ejemplo para los productos
   const products = [
@@ -40,11 +19,59 @@ const Inventario = () => {
     { id: 8, name: "Producto H", available: 12 },
   ];
 
+  // Función para alternar la visibilidad del modal de Crear Producto
+  const toggleModalProducto = () => {
+    if (!isModalProductoOpen) {
+      setModalClass('slide-in');
+    } else {
+      setModalClass('slide-out');
+      setTimeout(() => {
+        setIsModalProductoOpen(false);
+        setModalClass('');
+      }, 400); // Duración de la animación
+    }
+    setIsModalProductoOpen(!isModalProductoOpen);
+  };
+
+  // Función para alternar la visibilidad del modal de Crear Categoria
+  const toggleModalCategoria = () => {
+    if (!isModalCategoriaOpen) {
+      setModalClass('slide-in');
+    } else {
+      setModalClass('slide-out');
+      setTimeout(() => {
+        setIsModalCategoriaOpen(false);
+        setModalClass('');
+      }, 400); // Duración de la animación
+    }
+    setIsModalCategoriaOpen(!isModalCategoriaOpen);
+  };
+
+  const handleProductoSubmit = (e) => {
+    e.preventDefault();
+    // Lógica para enviar los datos del producto a la BD
+    console.log("Datos del producto enviados a la BD");
+    toggleModalProducto();
+  };
+
+  const handleCategoriaSubmit = (e) => {
+    e.preventDefault();
+    // Lógica para enviar los datos de la categoría a la BD
+    console.log("Datos de la categoría enviados a la BD");
+    toggleModalCategoria();
+  };
+
   return (
     <div className="main-content">
       <div className="top-bar">
-        <button className="create-product">Crear Producto</button>
+        <button className="create-product" onClick={toggleModalProducto}>
+          Crear Producto
+        </button>
+        
         <div className="search-bar">
+        <button className="create-category" onClick={toggleModalCategoria}>
+          Crear Categoria
+        </button>
           <select>
             <option>Categorías</option>
           </select>
@@ -65,6 +92,71 @@ const Inventario = () => {
           ))
         )}
       </div>
+
+      {/* Modal para crear producto */}
+      {isModalProductoOpen && (
+        <div className="modal-overlay">
+          <div className={`modal ${modalClass}`}>
+            <button className="close-button" onClick={toggleModalProducto}>
+              X
+            </button>
+            <h2>Crear Producto</h2>
+            <form onSubmit={handleProductoSubmit}>
+              <label>
+                Nombre:
+                <input type="text" name="nombre" required />
+              </label>
+              <label>
+                Precio:
+                <input type="number" name="precio" required />
+              </label>
+              <label>
+                Imagen:
+                <input type="file" name="imagen" accept="image/*" required />
+              </label>
+              <label>
+                Cantidad:
+                <input type="number" name="cantidad" required />
+              </label>
+              <label>
+                Categoría:
+                <select name="categoria" required>
+                  <option value="">Seleccionar Categoría</option>
+                  {/* Aquí puedes agregar las opciones de categoría */}
+                </select>
+              </label>
+              <button type="submit" className="button-submit">
+                Guardar
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para crear categoría */}
+      {isModalCategoriaOpen && (
+        <div className="modal-overlay">
+          <div className={`modal ${modalClass}`}>
+            <button className="close-button" onClick={toggleModalCategoria}>
+              X
+            </button>
+            <h2>Crear Categoria</h2>
+            <form onSubmit={handleCategoriaSubmit}>
+              <label>
+                Nombre:
+                <input type="text" name="nombre" required />
+              </label>
+              <label>
+                Descripción:
+                <input type="text" name="descripcion" required />
+              </label>
+              <button type="submit" className="button-submit">
+                Guardar
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
