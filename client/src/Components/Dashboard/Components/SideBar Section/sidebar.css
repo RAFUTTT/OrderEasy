@@ -1,0 +1,116 @@
+.sideBar {
+  background: hsl(0, 0%, 98%);
+  box-shadow: 2px 0px 6px rgba(0, 0, 0, 0.1);
+  width: 16%;
+  height: 100vh;
+  padding: 1rem 1.25rem;
+  overflow: hidden;
+}
+.sideBar .logoDiv {
+  padding: 1rem 0 2rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.sideBar .logoDiv img {
+  width: 220px;
+  min-width: 200px;
+  height: auto;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.sideBar .menuDiv .divTitle {
+  font-size: 1.1rem;
+  color: hsl(0, 0%, 25%);
+  padding: 0 0.5rem 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sideBar .menuDiv .menuList {
+  list-style-type: none;
+  padding: 0;
+  gap: 0.5rem;
+}
+.sideBar .menuDiv .menuList .listItem .menuLink {
+  text-decoration: none;
+  color: hsl(0, 0%, 25%);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 0.7rem 0.75rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.sideBar .menuDiv .menuList .listItem .menuLink:hover, .sideBar .menuDiv .menuList .listItem .menuLink.active {
+  background: rgba(0, 0, 0, 0.05);
+  color: hsl(252, 100%, 11%);
+}
+.sideBar .menuDiv .menuList .listItem .menuLink .icon {
+  font-size: 1.2rem;
+  margin-right: 0.7rem;
+}
+.sideBar .menuDiv .menuList .listItem .menuLink .smallText {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+.sideBar .menuDiv .menuList .listItem:hover .menuLink {
+  transform: translateX(3px);
+}
+
+.menuLink.active {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: hsl(252, 100%, 11%) !important;
+  font-weight: 600 !important;
+}
+
+@media screen and (max-width: 1400px) {
+  .sideBar {
+    width: 18%;
+  }
+  .sideBar .logoDiv img {
+    width: 200px;
+  }
+}
+@media screen and (max-width: 1200px) {
+  .sideBar {
+    width: 20%;
+  }
+  .sideBar .logoDiv img {
+    width: 180px;
+  }
+}
+@media screen and (max-width: 990px) {
+  .sideBar {
+    width: 25%;
+  }
+}
+@media screen and (max-width: 768px) {
+  .sideBar {
+    width: 100%;
+    height: auto;
+    padding: 0.75rem;
+  }
+  .sideBar .logoDiv {
+    padding: 0.75rem 0;
+  }
+  .sideBar .logoDiv img {
+    width: 160px;
+  }
+  .sideBar .menuDiv .menuList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  .sideBar .menuDiv .menuList .listItem .menuLink {
+    flex-direction: column;
+    padding: 0.75rem;
+    text-align: center;
+  }
+  .sideBar .menuDiv .menuList .listItem .menuLink .icon {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.4rem;
+  }
+}/*# sourceMappingURL=sidebar.css.map */

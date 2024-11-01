@@ -1,0 +1,153 @@
+// Variables
+$sidebarBg: hsl(0, 0%, 98%);
+$textColor: hsl(0, 0%, 25%);
+$activeColor: hsl(252, 100%, 11%);
+$hoverBg: rgba(0, 0, 0, 0.05);
+
+// Estilos del Sidebar
+.sideBar {
+  background: $sidebarBg;
+  box-shadow: 2px 0px 6px rgba(0, 0, 0, 0.1);
+  width: 16%; // Reducido de 20% a 16%
+  height: 100vh;
+  padding: 1rem 1.25rem; // Ajustado padding
+  overflow: hidden; // Cambiado de auto a hidden
+
+  // Logo
+  .logoDiv {
+    padding: 1rem 0 2rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      width: 220px; // Ajustado para el nuevo ancho
+      min-width: 200px;
+      height: auto;
+      object-fit: contain;
+    }
+  }
+
+  // Menú
+  .menuDiv {
+    .divTitle {
+      font-size: 1.1rem; // Reducido ligeramente
+      color: $textColor;
+      padding: 0 0.5rem 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .menuList {
+      list-style-type: none;
+      padding: 0;
+      gap: 0.5rem; // Reducido gap
+
+      .listItem {
+        .menuLink {
+          text-decoration: none;
+          color: $textColor;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          padding: 0.7rem 0.75rem; // Reducido padding
+          border-radius: 0.5rem;
+          display: flex;
+          align-items: center;
+          white-space: nowrap; // Evita que el texto se rompa
+
+          &:hover, &.active {
+            background: $hoverBg;
+            color: $activeColor;
+          }
+
+          .icon {
+            font-size: 1.2rem; // Reducido tamaño
+            margin-right: 0.7rem;
+          }
+
+          .smallText {
+            font-size: 0.95rem; // Reducido tamaño
+            font-weight: 500;
+          }
+        }
+
+        &:hover .menuLink {
+          transform: translateX(3px); // Reducido el movimiento
+        }
+      }
+    }
+  }
+}
+
+// Estado activo
+.menuLink.active {
+  background: $hoverBg !important;
+  color: $activeColor !important;
+  font-weight: 600 !important;
+}
+
+// Media queries
+@media screen and (max-width: 1400px) {
+  .sideBar {
+    width: 18%;
+    
+    .logoDiv img {
+      width: 200px;
+    }
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .sideBar {
+    width: 20%;
+    
+    .logoDiv img {
+      width: 180px;
+    }
+  }
+}
+
+@media screen and (max-width: 990px) {
+  .sideBar {
+    width: 25%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .sideBar {
+    width: 100%;
+    height: auto;
+    padding: 0.75rem;
+
+    .logoDiv {
+      padding: 0.75rem 0;
+      
+      img {
+        width: 160px;
+      }
+    }
+
+    .menuDiv {
+      .menuList {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+        
+        .listItem {
+          .menuLink {
+            flex-direction: column;
+            padding: 0.75rem;
+            text-align: center;
+            
+            .icon {
+              margin: 0 0 0.4rem 0;
+              font-size: 1.4rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
