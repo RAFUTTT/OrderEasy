@@ -1,20 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './balance.css';
+import { getProducts } from '../../../../../api/productService'; 
+import { createIngreso, createEgreso } from '../../../../../api/movimientosService'; 
 
 const Balance = () => {
-  // Controla la visibilidad de los modales
   const [isModalVentaOpen, setIsModalVentaOpen] = useState(false);
-  const [isModalGastoOpen, setIsModalGastoOpen] = useState(false);
+  const [isModalEgresoOpen, setIsModalEgresoOpen] = useState(false);
   const [modalClass, setModalClass] = useState('');
+  
+  const [productos, setProductos] = useState([{ productoNombre: '', cantidad: '' }]);
+  const [productosData, setProductosData] = useState({});
+  const [ventaExitosa, setVentaExitosa] = useState(false);
+  const [noHayProductos, setNoHayProductos] = useState(false);
 
-  // Datos de ejemplo para las filas de la tabla
   const rows = [
     { fecha: '2024-09-01', producto: 'Producto A', valor: '$100' },
     { fecha: '2024-09-02', producto: 'Producto B', valor: '$150' },
     { fecha: '2024-09-03', producto: 'Producto C', valor: '$200' },
   ];
 
-  // Función para alternar la visibilidad del modal de Nueva Venta
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getProducts();
+        const productosAgrupados = response.data.reduce((acc, producto) => {
+          const categoria = producto.categoriaNombre;
+          if (!acc[categoria]) {
+            acc[categoria] = [];
+          }
+          acc[categoria].push(producto);
+          return acc;
+        }, {});
+        setProductosData(productosAgrupados);
+        if (response.data.length === 0) {
+          setNoHayProductos(true);
+        }
+      } catch (error) {
+        console.error('Error al obtener los productos:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   const toggleModalVenta = () => {
     if (!isModalVentaOpen) {
       setModalClass('slide-in');
@@ -23,50 +51,77 @@ const Balance = () => {
       setTimeout(() => {
         setIsModalVentaOpen(false);
         setModalClass('');
-      }, 400); // Duración de la animación
+      }, 400);
     }
     setIsModalVentaOpen(!isModalVentaOpen);
   };
 
-  // Función para alternar la visibilidad del modal de Nuevo Gasto
-  const toggleModalGasto = () => {
-    if (!isModalGastoOpen) {
+  const toggleModalEgreso = () => {
+    if (!isModalEgresoOpen) {
       setModalClass('slide-in');
     } else {
       setModalClass('slide-out');
       setTimeout(() => {
-        setIsModalGastoOpen(false);
+        setIsModalEgresoOpen(false);
         setModalClass('');
-      }, 400); // Duración de la animación
+      }, 400);
     }
-    setIsModalGastoOpen(!isModalGastoOpen);
+    setIsModalEgresoOpen(!isModalEgresoOpen);
   };
 
-  const handleVentaSubmit = (e) => {
-    e.preventDefault();
-    // Lógica para enviar los datos a la BD
-    console.log("Datos de la venta enviados a la BD");
-    toggleModalVenta();
+  const handleProductoChange = (index, key, value) => {
+    const nuevosProductos = [...productos];
+    nuevosProductos[index][key] = value;
+    setProductos(nuevosProductos);
   };
 
-  const handleGastoSubmit = (e) => {
+  const handleAddProducto = () => {
+    setProductos([...productos, { productoNombre: '', cantidad: '' }]);
+  };
+
+  const handleRemoveProducto = (index) => {
+    const nuevosProductos = [...productos];
+    nuevosProductos.splice(index, 1);
+    setProductos(nuevosProductos);
+  };
+
+  const handleVentaSubmit = async (e) => {
     e.preventDefault();
-    // Lógica para enviar los datos a la BD
-    console.log("Datos del gasto enviados a la BD");
-    toggleModalGasto();
+    try {
+      const response = await createIngreso(productos);
+      console.log(response.data);
+      setVentaExitosa(true);
+      toggleModalVenta();
+      setProductos([{ productoNombre: '', cantidad: '' }]);
+    } catch (error) {
+      console.error('Error al crear el ingreso:', error);
+    }
+  };
+
+  const handleEgresoSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await createEgreso(productos);
+      console.log(response.data);
+      toggleModalEgreso();
+      setProductos([{ productoNombre: '', cantidad: '' }]);
+    } catch (error) {
+      console.error('Error al crear el egreso:', error);
+    }
   };
 
   return (
     <div className="container">
       <div className="main-content">
         <div className="buttonDiv">
-          <button className="button button-green" onClick={toggleModalVenta}>
+          <button className="button button-green" onClick={toggleModalVenta} disabled={noHayProductos}>
             Nueva Venta
           </button>
-          <button className="button button-red" onClick={toggleModalGasto}>
-            Nuevo Gasto
+          <button className="button button-red" onClick={toggleModalEgreso}>
+            Nuevo Egreso
           </button>
         </div>
+
         <div className="dashboard-card">
           <div className="balance-row">
             <div className="balance-item">
@@ -109,7 +164,18 @@ const Balance = () => {
           </table>
         </div>
 
-        {/* Modal para nueva venta */}
+        {noHayProductos && (
+          <div className="mensaje-error">
+            <p>No hay productos disponibles para vender</p>
+          </div>
+        )}
+
+        {ventaExitosa && (
+          <div className="mensaje-exito">
+            <p>Venta hecha exitosamente</p>
+          </div>
+        )}
+
         {isModalVentaOpen && (
           <div className="modal-overlay">
             <div className={`modal ${modalClass}`}>
@@ -118,46 +184,109 @@ const Balance = () => {
               </button>
               <h2>Nueva Venta</h2>
               <form onSubmit={handleVentaSubmit}>
-                <label>
-                  Producto:
-                  <input type="text" name="producto" required />
-                </label>
-                <label>
-                  Cantidad:
-                  <input type="number" name="cantidad" required />
-                </label>
-                <label>
-                  $ Valor:
-                  <input type="number" name="valor" required />
-                </label>
-                <button type="submit" className="button-submit">
-                  Guardar
-                </button>
+                <div>
+                  <label>Productos:</label>
+                  {productos.map((producto, index) => (
+                    <div key={index} className="producto-fields">
+                      <label>Nombre del Producto</label>
+                      <select
+                        className="select-producto"
+                        value={producto.productoNombre}
+                        onChange={(e) => handleProductoChange(index, 'productoNombre', e.target.value)}
+                        required
+                      >
+                        <option value="">Seleccione un producto</option>
+                        {Object.keys(productosData).map((categoria) => (
+                          <optgroup key={categoria} label={categoria}>
+                            {productosData[categoria].map((prod) => (
+                              <option key={prod.nombre} value={prod.nombre}>
+                                {prod.nombre} - Cantidad Disponible: {prod.cantidad}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+
+                      <label>Cantidad</label>
+                      <input
+                        className="input-cantidad"
+                        type="number"
+                        value={producto.cantidad}
+                        onChange={(e) => handleProductoChange(index, 'cantidad', e.target.value)}
+                        required
+                      />
+                      {index > 0 && (
+                        <button
+                          type="button"
+                          className="btn-eliminar"
+                          onClick={() => handleRemoveProducto(index)}
+                        >
+                          Eliminar Producto
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button type="button" onClick={handleAddProducto}>Agregar Otro Producto</button>
+                <button type="submit">Registrar Venta</button>
               </form>
             </div>
           </div>
         )}
 
-        {/* Modal para nuevo gasto */}
-        {isModalGastoOpen && (
+        {isModalEgresoOpen && (
           <div className="modal-overlay">
             <div className={`modal ${modalClass}`}>
-              <button className="close-button" onClick={toggleModalGasto}>
+              <button className="close-button" onClick={toggleModalEgreso}>
                 X
               </button>
-              <h2>Nuevo Gasto</h2>
-              <form onSubmit={handleGastoSubmit}>
-                <label>
-                  Descripción:
-                  <input type="text" name="descripcion" required />
-                </label>
-                <label>
-                  $ Valor:
-                  <input type="number" name="valorGasto" required />
-                </label>
-                <button type="submit" className="button-submit">
-                  Guardar
-                </button>
+              <h2>Registrar Egreso</h2>
+              <form onSubmit={handleEgresoSubmit}>
+                <div>
+                  <label>Productos:</label>
+                  {productos.map((producto, index) => (
+                    <div key={index} className="producto-fields">
+                      <label>Nombre del Producto</label>
+                      <select
+                        className="select-producto"
+                        value={producto.productoNombre}
+                        onChange={(e) => handleProductoChange(index, 'productoNombre', e.target.value)}
+                        required
+                      >
+                        <option value="">Seleccione un producto</option>
+                        {Object.keys(productosData).map((categoria) => (
+                          <optgroup key={categoria} label={categoria}>
+                            {productosData[categoria].map((prod) => (
+                              <option key={prod.nombre} value={prod.nombre}>
+                                {prod.nombre} - Cantidad Disponible: {prod.cantidad}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+
+                      <label>Cantidad</label>
+                      <input
+                        className="input-cantidad"
+                        type="number"
+                        value={producto.cantidad}
+                        onChange={(e) => handleProductoChange(index, 'cantidad', e.target.value)}
+                        required
+                      />
+                      {index > 0 && (
+                        <button
+                          type="button"
+                          className="btn-eliminar"
+                          onClick={() => handleRemoveProducto(index)}
+                        >
+                          Eliminar Producto
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button type="button" onClick={handleAddProducto}>Agregar Otro Producto</button>
+                <button type="submit">Registrar Egreso</button>
               </form>
             </div>
           </div>
