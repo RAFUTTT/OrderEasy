@@ -20,7 +20,6 @@ const Dashboard = () => {
           <Route path="/estadisticas" element={<Estadisticas />} />
           <Route path="/inventario" element={<Inventario />} />
           <Route path="/balance" element={<Balance />} />
-
         </Routes>
       </div>
     </div>

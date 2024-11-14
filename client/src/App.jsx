@@ -1,31 +1,26 @@
-import React from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-import Login from "./Components/Login/Login";
-import Dashboard from "./Components/Dashboard/Dashboard";
-import Register from "./Components/Register/Register"
-import "./App.scss";
+// App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Login from './components/Login/Login';
+import Register from './components/Register/Register';
+import Dashboard from './components/Dashboard/Dashboard';
+import { AuthProvider } from './auth/AuthContext';
+import './App.css';
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        {/* Ruta para Login */}
-        <Route path="/login" element={<Login />} />
-
-        {/* Ruta para Register */}
-        <Route path="/register" element={<Register />} />
-
-
-        {/* Ruta para el Dashboard, sin protección de autenticación */}
-        <Route path="/dashboard/*" element={<Dashboard />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" />} /> 
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard/*" element={<Dashboard />} />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
-};
+}
 
 export default App;

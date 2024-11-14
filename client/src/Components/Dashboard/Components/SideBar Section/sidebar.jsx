@@ -1,15 +1,31 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Navigate, useNavigate } from "react-router-dom";
 import "./sidebar.css";
+import { useAuth } from '../../../../auth/AuthContext'
 
 // Importar Iconos y Logo
-import logo from "../../../../LoginAssets/logo.png";
+import logo from "../assets/logo2.png";
 import { IoMdSpeedometer } from "react-icons/io";
 import { IoExitOutline } from "react-icons/io5";
 import { MdOutlineBarChart } from "react-icons/md";
 import { GoChecklist } from "react-icons/go";
 import { FaBalanceScale } from "react-icons/fa";
+
 const Sidebar = () => {
+
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div className="sideBar grid">
       <div className="logoDiv flex">
@@ -69,7 +85,7 @@ const Sidebar = () => {
             </NavLink>
           </li>
 
-          <li className="listItem">
+          <li className="listItem" onClick={handleLogout}>
             <NavLink
               to="/login"
               className={({ isActive }) =>

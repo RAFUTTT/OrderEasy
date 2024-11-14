@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./Login.css"; // Asegúrate de que el CSS se importe correctamente
 import "../../App.css";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext"; // Importa el contexto de autenticación
+import { login as loginApi } from "../../api/auth"; // Importa tu función de login de la API
 
 // Importar archivos
 import video from "../../LoginAssets/video.mp4";
@@ -13,17 +15,23 @@ import { BsFillShieldLockFill } from "react-icons/bs";
 import { AiOutlineSwapRight } from "react-icons/ai";
 
 const Login = () => {
-  const [loginEmail, setLoginEmail] = useState("");
+  const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginStatus, setLoginStatus] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth(); // Usa el método login del contexto de autenticación
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
 
-    // Lógica de validación y llamada a la API si es necesario
-    setLoginStatus("Inicio de sesión exitoso");
-    navigate("/dashboard");
+    try {
+      const response = await loginApi(loginUsername, loginPassword);
+      login(response.data.token); // Guarda el token en el contexto de autenticación
+      setLoginStatus("Inicio de sesión exitoso");
+      navigate("/dashboard");
+    } catch (error) {
+      setLoginStatus("Error en el inicio de sesión");
+    }
   };
 
   return (
@@ -55,15 +63,15 @@ const Login = () => {
             <span className={loginStatus ? "statusHolder" : ""}>{loginStatus}</span>
 
             <div className="inputDiv">
-              <label htmlFor="email">Usuario</label>
+              <label htmlFor="username">Usuario</label>
               <div className="input flex">
                 <FaUserShield className="icon" />
                 <input
-                  type="email"
-                  id="email"
+                  type="text"
+                  id="username"
                   placeholder="Ingrese su usuario"
-                  value={loginEmail}
-                  onChange={(event) => setLoginEmail(event.target.value)}
+                  value={loginUsername}
+                  onChange={(event) => setLoginUsername(event.target.value)}
                 />
               </div>
             </div>

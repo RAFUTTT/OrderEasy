@@ -1,65 +1,130 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import './inventario.css';
+import CrearProducto from './Formularios/CrearProducto';
+import CrearCategoria from './Formularios/CrearCategoria';
+import { getProducts, updateProduct, deleteProduct } from '../../../../../api/productService';
+import { getCategories } from '../../../../../api/categoryService';
 
 const Inventario = () => {
-  // Controla la visibilidad de los modales
   const [isModalProductoOpen, setIsModalProductoOpen] = useState(false);
   const [isModalCategoriaOpen, setIsModalCategoriaOpen] = useState(false);
   const [modalClass, setModalClass] = useState('');
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableProduct, setEditableProduct] = useState(null);
 
-  // Datos de ejemplo para los productos
-  const products = [
-    { id: 1, name: "Producto A", available: 10 },
-    { id: 2, name: "Producto B", available: 5 },
-    { id: 3, name: "Producto C", available: 0 },
-    { id: 4, name: "Producto D", available: 2 },
-    { id: 5, name: "Producto E", available: 8 },
-    { id: 6, name: "Producto F", available: 3 },
-    { id: 7, name: "Producto G", available: 0 },
-    { id: 8, name: "Producto H", available: 12 },
-  ];
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getProducts();
+        setProducts(response.data);
+      } catch (error) {
+        console.error('Error al obtener los productos:', error);
+      }
+    };
 
-  // Función para alternar la visibilidad del modal de Crear Producto
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories();
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error al obtener las categorías:', error);
+      }
+    };
+
+    fetchProducts();
+    fetchCategories();
+  }, []);
+
   const toggleModalProducto = () => {
-    if (!isModalProductoOpen) {
-      setModalClass('slide-in');
-    } else {
-      setModalClass('slide-out');
-      setTimeout(() => {
-        setIsModalProductoOpen(false);
-        setModalClass('');
-      }, 400); // Duración de la animación
-    }
     setIsModalProductoOpen(!isModalProductoOpen);
+    setModalClass(isModalProductoOpen ? 'slide-out' : 'slide-in');
   };
 
-  // Función para alternar la visibilidad del modal de Crear Categoria
   const toggleModalCategoria = () => {
-    if (!isModalCategoriaOpen) {
-      setModalClass('slide-in');
-    } else {
-      setModalClass('slide-out');
-      setTimeout(() => {
-        setIsModalCategoriaOpen(false);
-        setModalClass('');
-      }, 400); // Duración de la animación
-    }
     setIsModalCategoriaOpen(!isModalCategoriaOpen);
+    setModalClass(isModalCategoriaOpen ? 'slide-out' : 'slide-in');
   };
 
   const handleProductoSubmit = (e) => {
     e.preventDefault();
-    // Lógica para enviar los datos del producto a la BD
     console.log("Datos del producto enviados a la BD");
     toggleModalProducto();
   };
 
   const handleCategoriaSubmit = (e) => {
     e.preventDefault();
-    // Lógica para enviar los datos de la categoría a la BD
     console.log("Datos de la categoría enviados a la BD");
     toggleModalCategoria();
   };
+
+  const handleCategoryChange = (e) => {
+    setSelectedCategory(e.target.value);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleProductClick = (product) => {
+    setSelectedProduct(product);
+    setEditableProduct(product);
+    setIsEditing(false);
+  };
+
+  const closeProductDetails = () => {
+    setSelectedProduct(null);
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleDeleteClick = async () => {
+    if (window.confirm(`¿Estás seguro de que deseas eliminar el producto "${selectedProduct.nombre}"?`)) {
+      try {
+        await deleteProduct(selectedProduct.nombre); // Usamos nombre en lugar de id
+        setProducts(products.filter((product) => product.nombre !== selectedProduct.nombre)); // Filtramos usando el nombre
+        closeProductDetails();
+        console.log("Producto eliminado");
+      } catch (error) {
+        console.error("Error al eliminar el producto:", error);
+      }
+    }
+  };
+  
+
+  const handleSaveChanges = async () => {
+    try {
+      await updateProduct(editableProduct.id, editableProduct);
+      setProducts(products.map(product => product.id === editableProduct.id ? editableProduct : product));
+      setIsEditing(false);
+      setSelectedProduct(editableProduct);
+      console.log("Producto actualizado");
+    } catch (error) {
+      console.error("Error al actualizar el producto:", error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditableProduct(selectedProduct);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditableProduct({ ...editableProduct, [name]: value });
+  };
+
+  const filteredProducts = products.filter(product => {
+    const matchesCategory = selectedCategory ? product.categoriaNombre === selectedCategory : true;
+    const matchesSearchTerm = product.nombre.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearchTerm;
+  });
 
   return (
     <div className="main-content">
@@ -69,91 +134,86 @@ const Inventario = () => {
         </button>
         
         <div className="search-bar">
-        <button className="create-category" onClick={toggleModalCategoria}>
-          Crear Categoria
-        </button>
-          <select>
-            <option>Categorías</option>
+          <button className="create-category" onClick={toggleModalCategoria}>
+            Crear Categoria
+          </button>
+          <select value={selectedCategory} onChange={handleCategoryChange}>
+            <option value="">Categorías</option>
+            {categories.map(category => (
+              <option key={category.id} value={category.nombre}>
+                {category.nombre}
+              </option>
+            ))}
           </select>
-          <input type="text" placeholder="Buscar Producto" />
+          <input
+            type="text"
+            placeholder="Buscar Producto"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
         </div>
       </div>
 
       <div className="product-grid">
-        {products.length === 0 ? (
+        {filteredProducts.length === 0 ? (
           <p>No hay productos disponibles</p>
         ) : (
-          products.map(product => (
-            <div className="product-card" key={product.id}>
+          filteredProducts.map(product => (
+            <div className="product-card" key={product.id} onClick={() => handleProductClick(product)}>
               <div className="product-image"></div>
-              <h3>{product.name}</h3>
-              <p>Disponibles: {product.available}</p>
+              <h3>{product.nombre}</h3>
+              <p>Disponibles: {product.cantidad}</p>
             </div>
           ))
         )}
       </div>
 
-      {/* Modal para crear producto */}
       {isModalProductoOpen && (
-        <div className="modal-overlay">
-          <div className={`modal ${modalClass}`}>
-            <button className="close-button" onClick={toggleModalProducto}>
-              X
-            </button>
-            <h2>Crear Producto</h2>
-            <form onSubmit={handleProductoSubmit}>
-              <label>
-                Nombre:
-                <input type="text" name="nombre" required />
-              </label>
-              <label>
-                Precio:
-                <input type="number" name="precio" required />
-              </label>
-              <label>
-                Imagen:
-                <input type="file" name="imagen" accept="image/*" required />
-              </label>
-              <label>
-                Cantidad:
-                <input type="number" name="cantidad" required />
-              </label>
-              <label>
-                Categoría:
-                <select name="categoria" required>
-                  <option value="">Seleccionar Categoría</option>
-                  {/* Aquí puedes agregar las opciones de categoría */}
-                </select>
-              </label>
-              <button type="submit" className="button-submit">
-                Guardar
-              </button>
-            </form>
-          </div>
-        </div>
+        <CrearProducto handleSubmit={handleProductoSubmit} toggleModalProducto={toggleModalProducto} />
       )}
 
-      {/* Modal para crear categoría */}
       {isModalCategoriaOpen && (
-        <div className="modal-overlay">
-          <div className={`modal ${modalClass}`}>
-            <button className="close-button" onClick={toggleModalCategoria}>
-              X
-            </button>
-            <h2>Crear Categoria</h2>
-            <form onSubmit={handleCategoriaSubmit}>
-              <label>
-                Nombre:
-                <input type="text" name="nombre" required />
-              </label>
-              <label>
-                Descripción:
-                <input type="text" name="descripcion" required />
-              </label>
-              <button type="submit" className="button-submit">
-                Guardar
-              </button>
-            </form>
+        <CrearCategoria handleSubmit={handleCategoriaSubmit} toggleModalCategoria={toggleModalCategoria} />
+      )}
+
+      {selectedProduct && (
+        <div className="modal-overlay" onClick={closeProductDetails}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>{isEditing ? (
+              <input type="text" name="nombre" value={editableProduct.nombre} onChange={handleInputChange} />
+            ) : (
+              selectedProduct.nombre
+            )}</h2>
+            <p><strong>Descripción:</strong> {isEditing ? (
+              <input type="text" name="descripcion" value={editableProduct.descripcion} onChange={handleInputChange} />
+            ) : (
+              selectedProduct.descripcion
+            )}</p>
+            <p><strong>Cantidad:</strong> {isEditing ? (
+              <input type="number" name="cantidad" value={editableProduct.cantidad} onChange={handleInputChange} />
+            ) : (
+              selectedProduct.cantidad
+            )}</p>
+            <p><strong>Valor de compra:</strong> {isEditing ? (
+              <input type="number" name="valorCompra" value={editableProduct.valorCompra} onChange={handleInputChange} />
+            ) : (
+              selectedProduct.valorCompra
+            )}</p>
+            <p><strong>Valor de venta:</strong> {isEditing ? (
+              <input type="number" name="valorVenta" value={editableProduct.valorVenta} onChange={handleInputChange} />
+            ) : (
+              selectedProduct.valorVenta
+            )}</p>
+            <p><strong>Categoría:</strong> {selectedProduct.categoriaNombre}</p>
+
+            <button onClick={handleEditClick} disabled={isEditing}>Editar</button>
+            <button onClick={handleDeleteClick}>Eliminar</button>
+            {isEditing && (
+              <>
+                <button onClick={handleSaveChanges}>Guardar</button>
+                <button onClick={handleCancelEdit}>Cancelar</button>
+              </>
+            )}
           </div>
         </div>
       )}
