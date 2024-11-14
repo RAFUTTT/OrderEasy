@@ -96,14 +96,26 @@ const Inventario = () => {
       }
     }
   };
-  
 
   const handleSaveChanges = async () => {
     try {
-      await updateProduct(editableProduct.id, editableProduct);
-      setProducts(products.map(product => product.id === editableProduct.id ? editableProduct : product));
+      // Aquí usamos el nombre original de selectedProduct para hacer la consulta
+      console.log("Producto a actualizar:", editableProduct); // Verifica que editableProduct tiene los datos correctos
+  
+      // Realizamos la consulta con el nombre original (nombre de selectedProduct)
+      const productToUpdate = { ...editableProduct }; // Creamos una copia de editableProduct para evitar que se edite mientras hacemos la consulta.
+  
+      // Hacemos la consulta usando el nombre original de selectedProduct
+      await updateProduct(selectedProduct.nombre, productToUpdate);
+  
+      // Ahora que el producto ha sido actualizado, lo actualizamos en el estado
+      setProducts(products.map(product => 
+        product.nombre === selectedProduct.nombre ? productToUpdate : product
+      ));
+  
       setIsEditing(false);
-      setSelectedProduct(editableProduct);
+      setSelectedProduct(productToUpdate);
+  
       console.log("Producto actualizado");
     } catch (error) {
       console.error("Error al actualizar el producto:", error);
@@ -179,35 +191,81 @@ const Inventario = () => {
       {selectedProduct && (
         <div className="modal-overlay" onClick={closeProductDetails}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>{isEditing ? (
-              <input type="text" name="nombre" value={editableProduct.nombre} onChange={handleInputChange} />
-            ) : (
-              selectedProduct.nombre
-            )}</h2>
+            <h2>
+              {isEditing ? (
+                <input
+                  type="text"
+                  name="nombre"
+                  value={editableProduct.nombre}
+                  onChange={handleInputChange}
+                />
+              ) : (
+                selectedProduct.nombre
+              )}
+            </h2>
             <p><strong>Descripción:</strong> {isEditing ? (
-              <input type="text" name="descripcion" value={editableProduct.descripcion} onChange={handleInputChange} />
+              <input
+                type="text"
+                name="descripcion"
+                value={editableProduct.descripcion}
+                onChange={handleInputChange}
+              />
             ) : (
               selectedProduct.descripcion
             )}</p>
             <p><strong>Cantidad:</strong> {isEditing ? (
-              <input type="number" name="cantidad" value={editableProduct.cantidad} onChange={handleInputChange} />
+              <input
+                type="number"
+                name="cantidad"
+                value={editableProduct.cantidad}
+                onChange={handleInputChange}
+              />
             ) : (
               selectedProduct.cantidad
             )}</p>
-            <p><strong>Valor de compra:</strong> {isEditing ? (
-              <input type="number" name="valorCompra" value={editableProduct.valorCompra} onChange={handleInputChange} />
+            <p><strong>Precio de compra:</strong> {isEditing ? (
+              <input
+                type="number"
+                name="precioDeCompra"
+                value={editableProduct.precioDeCompra}
+                onChange={handleInputChange}
+              />
             ) : (
-              selectedProduct.valorCompra
+              selectedProduct.precioDeCompra
             )}</p>
-            <p><strong>Valor de venta:</strong> {isEditing ? (
-              <input type="number" name="valorVenta" value={editableProduct.valorVenta} onChange={handleInputChange} />
+            <p><strong>Precio de venta:</strong> {isEditing ? (
+              <input
+                type="number"
+                name="precioDeVenta"
+                value={editableProduct.precioDeVenta}
+                onChange={handleInputChange}
+              />
             ) : (
-              selectedProduct.valorVenta
+              selectedProduct.precioDeVenta
             )}</p>
-            <p><strong>Categoría:</strong> {selectedProduct.categoriaNombre}</p>
+            <p><strong>Categoría:</strong> {isEditing ? (
+              <select
+                name="categoriaNombre"
+                value={editableProduct.categoriaNombre}
+                onChange={handleInputChange}
+              >
+                {categories.map((category) => (
+                  <option key={category.id} value={category.nombre}>
+                    {category.nombre}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              selectedProduct.categoriaNombre
+            )}</p>
 
-            <button onClick={handleEditClick} disabled={isEditing}>Editar</button>
-            <button onClick={handleDeleteClick}>Eliminar</button>
+            {!isEditing && (
+              <>
+                <button onClick={handleEditClick}>Editar</button>
+                <button onClick={handleDeleteClick}>Eliminar</button>
+              </>
+            )}
+
             {isEditing && (
               <>
                 <button onClick={handleSaveChanges}>Guardar</button>
