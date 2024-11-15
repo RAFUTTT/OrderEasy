@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import './balance.css';
-import { getProducts } from '../../../../../api/productService'; 
-import { createIngreso, createEgreso } from '../../../../../api/movimientosService'; 
+import { getProducts } from '../../../../../api/productService';
+import { createIngreso, createEgreso, getIngresos, getEgresos } from '../../../../../api/movimientosService';
 
 const Balance = () => {
   const [isModalVentaOpen, setIsModalVentaOpen] = useState(false);
   const [isModalEgresoOpen, setIsModalEgresoOpen] = useState(false);
-  const [modalClass, setModalClass] = useState('');
-  
+  const [mostrarIngresos, setMostrarIngresos] = useState(true); // Muestra ingresos por defecto
+  const [mostrarEgresos, setMostrarEgresos] = useState(false); // No muestra egresos inicialmente
+  const [ingresos, setIngresos] = useState([]);
+  const [egresos, setEgresos] = useState([]);
   const [productos, setProductos] = useState([{ productoNombre: '', cantidad: '' }]);
   const [productosData, setProductosData] = useState({});
   const [ventaExitosa, setVentaExitosa] = useState(false);
   const [noHayProductos, setNoHayProductos] = useState(false);
-
-  const rows = [
-    { fecha: '2024-09-01', producto: 'Producto A', valor: '$100' },
-    { fecha: '2024-09-02', producto: 'Producto B', valor: '$150' },
-    { fecha: '2024-09-03', producto: 'Producto C', valor: '$200' },
-  ];
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -41,31 +37,36 @@ const Balance = () => {
     };
 
     fetchProducts();
+    cargarIngresos(); // Carga los ingresos por defecto al iniciar la página
   }, []);
 
-  const toggleModalVenta = () => {
-    if (!isModalVentaOpen) {
-      setModalClass('slide-in');
-    } else {
-      setModalClass('slide-out');
-      setTimeout(() => {
-        setIsModalVentaOpen(false);
-        setModalClass('');
-      }, 400);
+  const cargarIngresos = async () => {
+    try {
+      const response = await getIngresos();
+      setIngresos(response.data);
+      setMostrarIngresos(true); // Muestra los ingresos cuando se carga la página
+      setMostrarEgresos(false); // Oculta los egresos
+    } catch (error) {
+      console.error('Error al obtener los ingresos:', error);
     }
+  };
+
+  const cargarEgresos = async () => {
+    try {
+      const response = await getEgresos();
+      setEgresos(response.data);
+      setMostrarEgresos(true); // Muestra los egresos
+      setMostrarIngresos(false); // Oculta los ingresos
+    } catch (error) {
+      console.error('Error al obtener los egresos:', error);
+    }
+  };
+
+  const toggleModalVenta = () => {
     setIsModalVentaOpen(!isModalVentaOpen);
   };
 
   const toggleModalEgreso = () => {
-    if (!isModalEgresoOpen) {
-      setModalClass('slide-in');
-    } else {
-      setModalClass('slide-out');
-      setTimeout(() => {
-        setIsModalEgresoOpen(false);
-        setModalClass('');
-      }, 400);
-    }
     setIsModalEgresoOpen(!isModalEgresoOpen);
   };
 
@@ -88,8 +89,7 @@ const Balance = () => {
   const handleVentaSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await createIngreso(productos);
-      console.log(response.data);
+      await createIngreso(productos);
       setVentaExitosa(true);
       toggleModalVenta();
       setProductos([{ productoNombre: '', cantidad: '' }]);
@@ -101,8 +101,7 @@ const Balance = () => {
   const handleEgresoSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await createEgreso(productos);
-      console.log(response.data);
+      await createEgreso(productos);
       toggleModalEgreso();
       setProductos([{ productoNombre: '', cantidad: '' }]);
     } catch (error) {
@@ -110,9 +109,44 @@ const Balance = () => {
     }
   };
 
+  // Función para formatear números como pesos colombianos
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0, // Sin decimales si no son necesarios
+    }).format(amount);
+  };
+
+  // Función para calcular la suma de los ingresos
+  const calcularIngresosTotales = () => {
+    return ingresos.reduce((total, ingreso) => total + ingreso.total, 0);
+  };
+
+  // Función para calcular la suma de los egresos
+  const calcularEgresosTotales = () => {
+    return egresos.reduce((total, egreso) => total + egreso.total, 0);
+  };
+
+  // Función para calcular el balance general
+  const calcularBalanceGeneral = () => {
+    return calcularIngresosTotales() - calcularEgresosTotales();
+  };
+
+  // Ordena los ingresos por fecha (más reciente primero)
+  const ordenarIngresosPorFecha = () => {
+    return ingresos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  };
+
+  // Ordena los egresos por fecha (más reciente primero)
+  const ordenarEgresosPorFecha = () => {
+    return egresos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  };
+
   return (
     <div className="container">
       <div className="main-content">
+        {/* Botones para mostrar modales */}
         <div className="buttonDiv">
           <button className="button button-green" onClick={toggleModalVenta} disabled={noHayProductos}>
             Nueva Venta
@@ -122,81 +156,114 @@ const Balance = () => {
           </button>
         </div>
 
+        {/* Cajitas de balance */}
         <div className="dashboard-card">
           <div className="balance-row">
             <div className="balance-item">
               <h3>Balance General</h3>
-              <p>$0</p>
+              <p>{formatCurrency(calcularBalanceGeneral())}</p>
             </div>
             <div className="balance-item">
               <h3>Ingresos Totales</h3>
-              <p>$0</p>
+              <p>{formatCurrency(calcularIngresosTotales())}</p>
             </div>
             <div className="balance-item">
               <h3>Egresos Totales</h3>
-              <p>$0</p>
+              <p>{formatCurrency(calcularEgresosTotales())}</p>
             </div>
           </div>
-
-          {/* Botones adicionales */}
-          <div className="acciones-balance">
-            <button className="btn-ingresos">Ver Ingresos</button>
-            <button className="btn-egresos">Ver Egresos</button>
-          </div>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Producto</th>
-                <th>Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.length === 0 ? (
-                <tr>
-                  <td colSpan="3">No hay datos disponibles</td>
-                </tr>
-              ) : (
-                rows.map((row, index) => (
-                  <tr key={index}>
-                    <td>{row.fecha}</td>
-                    <td>{row.producto}</td>
-                    <td>{row.valor}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
         </div>
 
-        {noHayProductos && (
-          <div className="mensaje-error">
-            <p>No hay productos disponibles para vender</p>
+        {/* Botones para ver ingresos y egresos */}
+        <div className="acciones-balance">
+          <button className="btn-ingresos" onClick={cargarIngresos}>
+            Ver Ingresos
+          </button>
+          <button className="btn-egresos" onClick={cargarEgresos}>
+            Ver Egresos
+          </button>
+        </div>
+
+        {/* Tabla de ingresos */}
+        {mostrarIngresos && (
+          <div className="tabla-ingresos">
+            <h2>Ingresos</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ingresos.length === 0 ? (
+                  <tr>
+                    <td colSpan="4">No hay ingresos registrados</td>
+                  </tr>
+                ) : (
+                  ordenarIngresosPorFecha().map((ingreso, index) => (
+                    <tr key={index}>
+                      <td>{new Date(ingreso.fecha).toLocaleDateString()}</td>
+                      <td>{ingreso.productoNombre}</td>
+                      <td>{ingreso.cantidad}</td>
+                      <td>{formatCurrency(ingreso.total)}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         )}
 
-        {ventaExitosa && (
-          <div className="mensaje-exito">
-            <p>Venta hecha exitosamente</p>
+        {/* Tabla de egresos */}
+        {mostrarEgresos && (
+          <div className="tabla-egresos">
+            <h2>Egresos</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {egresos.length === 0 ? (
+                  <tr>
+                    <td colSpan="4">No hay egresos registrados</td>
+                  </tr>
+                ) : (
+                  ordenarEgresosPorFecha().map((egreso, index) => (
+                    <tr key={index}>
+                      <td>{new Date(egreso.fecha).toLocaleDateString()}</td>
+                      <td>{egreso.productoNombre}</td>
+                      <td>{egreso.cantidad}</td>
+                      <td>{formatCurrency(egreso.total)}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         )}
 
+        {/* Modales para Nueva Venta y Nuevo Egreso */}
         {isModalVentaOpen && (
           <div className="modal-overlay">
-            <div className={`modal ${modalClass}`}>
+            <div className="modal">
               <button className="close-button" onClick={toggleModalVenta}>
                 X
               </button>
               <h2>Nueva Venta</h2>
               <form onSubmit={handleVentaSubmit}>
                 <div>
-                  <label>Productos:</label>
                   {productos.map((producto, index) => (
                     <div key={index} className="producto-fields">
                       <label>Nombre del Producto</label>
                       <select
-                        className="select-producto"
                         value={producto.productoNombre}
                         onChange={(e) => handleProductoChange(index, 'productoNombre', e.target.value)}
                         required
@@ -215,46 +282,42 @@ const Balance = () => {
 
                       <label>Cantidad</label>
                       <input
-                        className="input-cantidad"
                         type="number"
                         value={producto.cantidad}
                         onChange={(e) => handleProductoChange(index, 'cantidad', e.target.value)}
                         required
                       />
                       {index > 0 && (
-                        <button
-                          type="button"
-                          className="btn-eliminar"
-                          onClick={() => handleRemoveProducto(index)}
-                        >
+                        <button type="button" onClick={() => handleRemoveProducto(index)}>
                           Eliminar Producto
                         </button>
                       )}
                     </div>
                   ))}
                 </div>
-                <button type="button" onClick={handleAddProducto}>Agregar Otro Producto</button>
+                <button type="button" onClick={handleAddProducto}>
+                  Agregar Otro Producto
+                </button>
                 <button type="submit">Registrar Venta</button>
               </form>
             </div>
           </div>
         )}
 
+        {/* Modales para Nuevo Egreso */}
         {isModalEgresoOpen && (
           <div className="modal-overlay">
-            <div className={`modal ${modalClass}`}>
+            <div className="modal">
               <button className="close-button" onClick={toggleModalEgreso}>
                 X
               </button>
               <h2>Registrar Egreso</h2>
               <form onSubmit={handleEgresoSubmit}>
                 <div>
-                  <label>Productos:</label>
                   {productos.map((producto, index) => (
                     <div key={index} className="producto-fields">
                       <label>Nombre del Producto</label>
                       <select
-                        className="select-producto"
                         value={producto.productoNombre}
                         onChange={(e) => handleProductoChange(index, 'productoNombre', e.target.value)}
                         required
@@ -264,7 +327,7 @@ const Balance = () => {
                           <optgroup key={categoria} label={categoria}>
                             {productosData[categoria].map((prod) => (
                               <option key={prod.nombre} value={prod.nombre}>
-                                {prod.nombre} - Cantidad Disponible: {prod.cantidad}
+                                {prod.nombre}
                               </option>
                             ))}
                           </optgroup>
@@ -273,25 +336,22 @@ const Balance = () => {
 
                       <label>Cantidad</label>
                       <input
-                        className="input-cantidad"
                         type="number"
                         value={producto.cantidad}
                         onChange={(e) => handleProductoChange(index, 'cantidad', e.target.value)}
                         required
                       />
                       {index > 0 && (
-                        <button
-                          type="button"
-                          className="btn-eliminar"
-                          onClick={() => handleRemoveProducto(index)}
-                        >
+                        <button type="button" onClick={() => handleRemoveProducto(index)}>
                           Eliminar Producto
                         </button>
                       )}
                     </div>
                   ))}
                 </div>
-                <button type="button" onClick={handleAddProducto}>Agregar Otro Producto</button>
+                <button type="button" onClick={handleAddProducto}>
+                  Agregar Otro Producto
+                </button>
                 <button type="submit">Registrar Egreso</button>
               </form>
             </div>
