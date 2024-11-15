@@ -35,10 +35,29 @@ const Balance = () => {
         console.error('Error al obtener los productos:', error);
       }
     };
-
+  
+    const fetchMovimientos = async () => {
+      try {
+        // Cargar ingresos
+        const ingresosResponse = await getIngresos();
+        setIngresos(ingresosResponse.data);
+        
+        // Cargar egresos
+        const egresosResponse = await getEgresos();
+        setEgresos(egresosResponse.data);
+        
+        // Mostrar ingresos por defecto
+        setMostrarIngresos(true);
+        setMostrarEgresos(false);
+      } catch (error) {
+        console.error('Error al obtener los movimientos:', error);
+      }
+    };
+  
     fetchProducts();
-    cargarIngresos(); // Carga los ingresos por defecto al iniciar la página
+    fetchMovimientos(); // Cargar ingresos y egresos por defecto al cargar la página
   }, []);
+  
 
   const cargarIngresos = async () => {
     try {
