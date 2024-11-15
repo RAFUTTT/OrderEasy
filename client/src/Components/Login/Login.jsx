@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import "./Login.css"; // Asegúrate de que el CSS se importe correctamente
 import "../../App.css";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext"; // Importa el contexto de autenticación
 import { login as loginApi } from "../../api/auth"; // Importa tu función de login de la API
-
 
 // Importar archivos
 import video from "../../LoginAssets/video.mp4";
@@ -28,45 +27,45 @@ const Login = () => {
 
     try {
       Swal.fire({
-        title: 'Iniciando sesión...',
-        text: 'Por favor espera un momento',
+        title: "Iniciando sesión...",
+        text: "Por favor espera un momento",
         allowOutsideClick: false,
         didOpen: () => {
           Swal.showLoading();
-        }
+        },
       });
-    
+
+      // Llamada a la API para iniciar sesión
       const response = await loginApi(loginUsername, loginPassword);
+
       Swal.close(); // Cierra la alerta de carga
-    
-      login(response.data.token); // Guarda el token en el contexto de autenticación
+
+      // Guarda el token en el contexto de autenticación
+      login(response.data.token); 
+
+      // Actualiza el estado y muestra una alerta de éxito
       setLoginStatus("Inicio de sesión exitoso");
-    
-      // Muestra un mensaje de éxito después de cerrar la alerta de carga
       Swal.fire({
         icon: "success",
         title: "Inicio de sesión exitoso",
-        text: "Bienvenido al panel de control"
+        text: "Bienvenido al panel de control",
       });
-    
+
+      // Navega al dashboard
       navigate("/dashboard");
     } catch (error) {
       Swal.close(); // Cierra la alerta de carga en caso de error
-    
+
       // Muestra una alerta de error si el inicio de sesión falla
       Swal.fire({
         icon: "error",
         title: "Error de inicio de sesión",
         text: "Usuario o contraseña incorrectos. Por favor, inténtalo de nuevo.",
-        footer: '<a href="#">¿Necesitas ayuda con tu cuenta?</a>'
+        footer: '<a href="#">¿Necesitas ayuda con tu cuenta?</a>',
       });
-    
+
       setLoginStatus("Error en el inicio de sesión");
     }
-    
-    
-    
-    
   };
 
   return (
@@ -76,14 +75,15 @@ const Login = () => {
           <video src={video} autoPlay muted loop></video>
 
           <div className="textDiv">
-            <h4 className='title'>¡Descubre la forma más cómoda y segura de comprar productos tecnológicos con nuestra página web!</h4>
-            <p></p>
+            <h4 className="title">
+              ¡Descubre la forma más cómoda y segura de comprar productos tecnológicos con nuestra página web!
+            </h4>
           </div>
 
           <div className="footerDiv flex">
-            <span className="text">No tienes cuenta aún?</span>
-            <Link to={'/register'}>
-              <button className='btn'>Regístrate aquí!</button>
+            <span className="text">¿No tienes cuenta aún?</span>
+            <Link to={"/register"}>
+              <button className="btn">Regístrate aquí!</button>
             </Link>
           </div>
         </div>
@@ -91,7 +91,7 @@ const Login = () => {
         <div className="formDiv flex">
           <div className="headDiv">
             <img src={logo} alt="Logo" />
-            <h3>Bienvenido!</h3>
+            <h3>¡Bienvenido!</h3>
           </div>
 
           <form className="form grid" onSubmit={onSubmit}>
