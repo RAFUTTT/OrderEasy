@@ -138,6 +138,12 @@ const Balance = () => {
             </div>
           </div>
 
+          {/* Botones adicionales */}
+          <div className="acciones-balance">
+            <button className="btn-ingresos">Ver Ingresos</button>
+            <button className="btn-egresos">Ver Egresos</button>
+          </div>
+
           <table>
             <thead>
               <tr>

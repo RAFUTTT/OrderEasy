@@ -1,226 +1,290 @@
 body,
 html {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    height: 100%;
-    background-color: #f0f2f5;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  height: 100%;
+  background-color: #f0f2f5;
 }
 
 .container {
-    display: flex;
-    height: 100vh;
+  display: flex;
+  height: 100vh;
 }
 
 .sidebar {
-    width: 200px;
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .main-content {
-    flex-grow: 1;
-    padding: 20px;
-    overflow-y: auto;
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
 }
 
 .logo {
-    width: 100px;
-    margin-bottom: 20px;
+  width: 100px;
+  margin-bottom: 20px;
 }
 
 .menu-item {
-    padding: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .menu-item:hover,
 .menu-item.active {
-    background-color: #e0e0e0;
+  background-color: #e0e0e0;
 }
 
 .dashboard-card {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .balance-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .balance-item {
-    flex: 1;
-    text-align: center;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    margin: 0 5px;
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  margin: 0 5px;
 }
 
 .button-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
 }
 
 .button-green {
-    background-color: #28a745;
-    margin: 10px;
-    border-radius: 10px;
+  background-color: #28a745;
+  margin: 10px;
+  border-radius: 10px;
 }
 
 .button-red {
-    background-color: #dc3545;
-    margin: 10px;
-    border-radius: 10px;
+  background-color: #dc3545;
+  margin: 10px;
+  border-radius: 10px;
 }
 
 .button:hover {
-    opacity: 0.9;
+  transform: scale(1.05);
+  opacity: 0.9;
 }
 
+/* Contenedor de los botones */
+.boton-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between; /* Esto asegura que los botones se distribuyan de manera equitativa */
+}
+
+/* Estilos para los botones */
+
+  .btn-ingresos,
+  .btn-egresos {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+    width: 48%; /* Hacemos que cada botón ocupe un 50% del ancho del contenedor, con un margen de separación */
+  }
+
+  .btn-ingresos {
+    background-color: #28a745;
+  }
+
+  .btn-egresos {
+    background-color: #dc3545;
+  }
+
+  .btn-ingresos:hover {
+    background-color: #28a745;
+    transform: scale(1.05);
+  }
+
+  .btn-egresos:hover {
+    background-color: #dc3545;
+    transform: scale(1.05);
+  }
+
+  .btn-ingresos:active,
+  .btn-egresos:active {
+    transform: scale(0.98);
+  }
+
+
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 th,
 td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
 }
 
 th {
-    background-color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 
 .buttonDiv {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
 .ingresos {
-    background-color: #19B567;
-    border: none;
-    color: white;
-    padding: 20px 320px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border-radius: 15px;
-    margin: 4px 2px;
-    cursor: pointer;
+  background-color: #19b567;
+  border: none;
+  color: white;
+  padding: 20px 320px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 15px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.ingresos:hover {
+  background-color: #138d4c;
+  transform: scale(1.05);
 }
 
 .egresos {
-    background-color: #DE5656;
-    border: none;
-    color: white;
-    padding: 15px 320px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border-radius: 15px;
-    margin: 4px 2px;
-    cursor: pointer;
+  background-color: #de5656;
+  border: none;
+  color: white;
+  padding: 15px 320px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 15px;
+  margin: 4px 2px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.egresos:hover {
+  background-color: #c44a4a;
+  transform: scale(1.05);
+}
+
+.egresos:active,
+.ingresos:active {
+  transform: scale(0.98);
 }
 
 @keyframes slideIn {
-    from {
-      transform: translateY(-30%);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+  from {
+    transform: translateY(-30%);
+    opacity: 0;
   }
-  
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
-  
-  .modal {
-    background: white;
-    padding: 20px;
-    width: 300px;
-    max-width: 90%;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    position: relative;
-    text-align: center;
-  
-    /* Añadimos la animación */
-    animation: slideIn 0.4s ease-out;
-  }
-  
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    border: none;
-    background: transparent;
-    font-size: 18px;
-    cursor: pointer;
-  }
-  
-  .modal h2 {
-    margin: 0 0 20px;
-  }
-  
-  .modal label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: bold;
-  }
-  
-  .modal input {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .button-submit {
-    background-color: #28a745;
-    color: white;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .button-submit:hover {
-    background-color: #218838;
-  }  
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  width: 300px;
+  max-width: 90%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  text-align: center;
+  animation: slideIn 0.4s ease-out;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.modal h2 {
+  margin: 0 0 20px;
+}
+
+.modal label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.modal input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button-submit {
+  background-color: #28a745;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button-submit:hover {
+  background-color: #218838;
+}

@@ -1,6 +1,7 @@
 // CrearCategoria.js
 import React, { useState } from 'react';
 import { createCategory } from '../../../../../../api/categoryService';
+import Swal from 'sweetalert2';
 
 const CrearCategoria = ({ toggleModalCategoria }) => {
   const [nombre, setNombre] = useState('');
@@ -10,14 +11,24 @@ const CrearCategoria = ({ toggleModalCategoria }) => {
     event.preventDefault();
     const category = { nombre, descripcion };
     try {
-      await createCategory(category);
-      alert('Categoría creada con éxito');
-      toggleModalCategoria(); // Cierra el modal después de crear la categoría
+        await createCategory(category);
+        Swal.fire({
+            icon: 'success',
+            title: 'Categoría creada con éxito',
+            text: `La categoría "${nombre}" ha sido creada satisfactoriamente.`
+        }).then(() => {
+            window.location.reload(); // Recarga la página después de mostrar la alerta
+        });
+        toggleModalCategoria(); // Cierra el modal después de crear la categoría
     } catch (error) {
-      console.error('Error al crear la categoría:', error);
-      alert('Hubo un error al crear la categoría');
+        console.error('Error al crear la categoría:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un error al crear la categoría. Por favor, inténtalo de nuevo más tarde.'
+        });
     }
-  };
+};
 
   return (
     <div className="modal-overlay">

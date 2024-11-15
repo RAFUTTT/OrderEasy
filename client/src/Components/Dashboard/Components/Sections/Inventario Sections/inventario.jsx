@@ -4,6 +4,7 @@ import CrearProducto from './Formularios/CrearProducto';
 import CrearCategoria from './Formularios/CrearCategoria';
 import { getProducts, updateProduct, deleteProduct } from '../../../../../api/productService';
 import { getCategories } from '../../../../../api/categoryService';
+import Swal from 'sweetalert2';
 
 const Inventario = () => {
   const [isModalProductoOpen, setIsModalProductoOpen] = useState(false);
@@ -84,18 +85,36 @@ const Inventario = () => {
     setIsEditing(true);
   };
 
-  const handleDeleteClick = async () => {
-    if (window.confirm(`¿Estás seguro de que deseas eliminar el producto "${selectedProduct.nombre}"?`)) {
-      try {
-        await deleteProduct(selectedProduct.nombre); // Usamos nombre en lugar de id
-        setProducts(products.filter((product) => product.nombre !== selectedProduct.nombre)); // Filtramos usando el nombre
-        closeProductDetails();
-        console.log("Producto eliminado");
-      } catch (error) {
-        console.error("Error al eliminar el producto:", error);
-      }
-    }
-  };
+const handleDeleteClick = async () => {
+    Swal.fire({
+        title: `¿Estás seguro de que deseas eliminar el producto "${selectedProduct.nombre}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                await deleteProduct(selectedProduct.nombre); // Usamos nombre en lugar de id
+                setProducts(products.filter((product) => product.nombre !== selectedProduct.nombre)); // Filtramos usando el nombre
+                closeProductDetails();
+                console.log("Producto eliminado");
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Producto eliminado',
+                    text: `El producto "${selectedProduct.nombre}" ha sido eliminado con éxito.`,
+                });
+            } catch (error) {
+                console.error("Error al eliminar el producto:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al eliminar el producto. Por favor, inténtalo de nuevo más tarde.'
+                });
+            }
+        }
+    });
+};
 
   const handleSaveChanges = async () => {
     try {
@@ -150,7 +169,7 @@ const Inventario = () => {
             Crear Categoria
           </button>
           <select value={selectedCategory} onChange={handleCategoryChange}>
-            <option value="">Categorías</option>
+            <option value="">Todas las categorias</option>
             {categories.map(category => (
               <option key={category.id} value={category.nombre}>
                 {category.nombre}

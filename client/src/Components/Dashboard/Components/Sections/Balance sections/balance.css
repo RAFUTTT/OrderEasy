@@ -77,7 +77,8 @@ html {
   border-radius: 4px;
   color: #fff;
   cursor: pointer;
-  transition: background-color 0.3s;
+  font-weight: bold;
+  transition: all 0.3s;
 }
 
 .button-green {
@@ -93,7 +94,52 @@ html {
 }
 
 .button:hover {
+  transform: scale(1.05);
   opacity: 0.9;
+}
+
+/* Contenedor de los botones */
+.boton-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between; /* Esto asegura que los botones se distribuyan de manera equitativa */
+}
+
+/* Estilos para los botones */
+.btn-ingresos,
+.btn-egresos {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+  width: 48%; /* Hacemos que cada botón ocupe un 50% del ancho del contenedor, con un margen de separación */
+}
+
+.btn-ingresos {
+  background-color: #28a745;
+}
+
+.btn-egresos {
+  background-color: #dc3545;
+}
+
+.btn-ingresos:hover {
+  background-color: #28a745;
+  transform: scale(1.05);
+}
+
+.btn-egresos:hover {
+  background-color: #dc3545;
+  transform: scale(1.05);
+}
+
+.btn-ingresos:active,
+.btn-egresos:active {
+  transform: scale(0.98);
 }
 
 table {
@@ -119,7 +165,7 @@ th {
 }
 
 .ingresos {
-  background-color: #19B567;
+  background-color: #19b567;
   border: none;
   color: white;
   padding: 20px 320px;
@@ -130,10 +176,16 @@ th {
   border-radius: 15px;
   margin: 4px 2px;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.ingresos:hover {
+  background-color: #138d4c;
+  transform: scale(1.05);
 }
 
 .egresos {
-  background-color: #DE5656;
+  background-color: #de5656;
   border: none;
   color: white;
   padding: 15px 320px;
@@ -144,6 +196,17 @@ th {
   border-radius: 15px;
   margin: 4px 2px;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.egresos:hover {
+  background-color: #c44a4a;
+  transform: scale(1.05);
+}
+
+.egresos:active,
+.ingresos:active {
+  transform: scale(0.98);
 }
 
 @keyframes slideIn {
@@ -178,7 +241,6 @@ th {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
   text-align: center;
-  /* Añadimos la animación */
   animation: slideIn 0.4s ease-out;
 }
 
@@ -218,6 +280,7 @@ th {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .button-submit:hover {

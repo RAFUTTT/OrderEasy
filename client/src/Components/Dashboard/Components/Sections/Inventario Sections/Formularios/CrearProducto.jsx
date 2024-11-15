@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getCategories } from '../../../../../../api/categoryService';
 import { createProduct } from '../../../../../../api/productService';
-import '../inventario.css'
+import Swal from 'sweetalert2';
+import '../inventario.css';
 
 const CrearProducto = ({ toggleModalProducto }) => {
   const [nombre, setNombre] = useState('');
@@ -44,9 +45,21 @@ const CrearProducto = ({ toggleModalProducto }) => {
     try {
       const response = await createProduct(producto);
       console.log(response.data);
+      Swal.fire({
+        icon: 'success',
+        title: 'Producto creado correctamente',
+        text: `El producto "${nombre}" ha sido creado con éxito.`
+      }).then(() => {
+        window.location.reload(); // Recarga la página después de mostrar la alerta
+      });
       toggleModalProducto(); // Cierra la ventana emergente después de enviar el formulario
     } catch (error) {
       console.error('Error al crear el producto:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un error al crear el producto. Por favor, inténtelo de nuevo.'
+      });
     }
   };
 
