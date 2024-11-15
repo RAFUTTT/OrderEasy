@@ -346,7 +346,7 @@ const Balance = () => {
                           <optgroup key={categoria} label={categoria}>
                             {productosData[categoria].map((prod) => (
                               <option key={prod.nombre} value={prod.nombre}>
-                                {prod.nombre}
+                                {prod.nombre} - Cantidad Disponible: {prod.cantidad}
                               </option>
                             ))}
                           </optgroup>
@@ -376,6 +376,8 @@ const Balance = () => {
             </div>
           </div>
         )}
+
+
       </div>
     </div>
   );
