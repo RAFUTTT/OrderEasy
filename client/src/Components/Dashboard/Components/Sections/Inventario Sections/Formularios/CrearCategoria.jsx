@@ -58,8 +58,8 @@ const CrearCategoria = ({ toggleModalCategoria }) => {
               required
             />
           </label>
-          <button type="submit" className="button-submit">
-            Guardar
+          <button type="submit" className="add">
+            Crear
           </button>
         </form>
       </div>

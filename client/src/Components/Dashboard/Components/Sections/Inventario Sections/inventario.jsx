@@ -116,30 +116,47 @@ const handleDeleteClick = async () => {
     });
 };
 
-  const handleSaveChanges = async () => {
-    try {
-      // Aquí usamos el nombre original de selectedProduct para hacer la consulta
-      console.log("Producto a actualizar:", editableProduct); // Verifica que editableProduct tiene los datos correctos
-  
-      // Realizamos la consulta con el nombre original (nombre de selectedProduct)
-      const productToUpdate = { ...editableProduct }; // Creamos una copia de editableProduct para evitar que se edite mientras hacemos la consulta.
-  
-      // Hacemos la consulta usando el nombre original de selectedProduct
-      await updateProduct(selectedProduct.nombre, productToUpdate);
-  
-      // Ahora que el producto ha sido actualizado, lo actualizamos en el estado
-      setProducts(products.map(product => 
-        product.nombre === selectedProduct.nombre ? productToUpdate : product
-      ));
-  
-      setIsEditing(false);
-      setSelectedProduct(productToUpdate);
-  
-      console.log("Producto actualizado");
-    } catch (error) {
-      console.error("Error al actualizar el producto:", error);
-    }
-  };
+
+const handleSaveChanges = async () => {
+  try {
+    // Aquí usamos el nombre original de selectedProduct para hacer la consulta
+    console.log("Producto a actualizar:", editableProduct); // Verifica que editableProduct tiene los datos correctos
+
+    // Realizamos la consulta con el nombre original (nombre de selectedProduct)
+    const productToUpdate = { ...editableProduct }; // Creamos una copia de editableProduct para evitar que se edite mientras hacemos la consulta.
+
+    // Hacemos la consulta usando el nombre original de selectedProduct
+    await updateProduct(selectedProduct.nombre, productToUpdate);
+
+    // Ahora que el producto ha sido actualizado, lo actualizamos en el estado
+    setProducts(products.map(product => 
+      product.nombre === selectedProduct.nombre ? productToUpdate : product
+    ));
+
+    setIsEditing(false);
+    setSelectedProduct(productToUpdate);
+
+    // SweetAlert de éxito
+    Swal.fire({
+      icon: 'success',
+      title: '¡Producto actualizado!',
+      text: 'Los cambios se han guardado correctamente.',
+      confirmButtonText: 'Aceptar'
+    });
+
+    console.log("Producto actualizado");
+  } catch (error) {
+    // SweetAlert de error
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Hubo un problema al actualizar el producto.',
+      confirmButtonText: 'Aceptar'
+    });
+
+    console.error("Error al actualizar el producto:", error);
+  }
+};
 
   const handleCancelEdit = () => {
     setIsEditing(false);
@@ -211,6 +228,7 @@ const handleDeleteClick = async () => {
         <div className="modal-overlay" onClick={closeProductDetails}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>
+              
               {isEditing ? (
                 <input
                   type="text"
@@ -280,15 +298,15 @@ const handleDeleteClick = async () => {
 
             {!isEditing && (
               <>
-                <button onClick={handleEditClick}>Editar</button>
-                <button onClick={handleDeleteClick}>Eliminar</button>
+                <button onClick={handleEditClick} className="edit">Editar</button>
+                <button onClick={handleDeleteClick} className="delete">Eliminar</button>
               </>
             )}
 
             {isEditing && (
               <>
-                <button onClick={handleSaveChanges}>Guardar</button>
-                <button onClick={handleCancelEdit}>Cancelar</button>
+                <button onClick={handleSaveChanges} className="add">Guardar</button>
+                <button onClick={handleCancelEdit} className="delete">Cancelar</button>
               </>
             )}
           </div>

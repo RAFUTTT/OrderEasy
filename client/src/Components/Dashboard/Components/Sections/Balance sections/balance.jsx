@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './balance.css';
+import Swal from 'sweetalert2';
 import { getProducts } from '../../../../../api/productService';
 import { createIngreso, createEgreso, getIngresos, getEgresos } from '../../../../../api/movimientosService';
 
@@ -108,25 +109,88 @@ const Balance = () => {
   const handleVentaSubmit = async (e) => {
     e.preventDefault();
     try {
+      for (const producto of productos) {
+        const categoria = Object.keys(productosData).find((cat) =>
+          productosData[cat].some((p) => p.nombre === producto.productoNombre)
+        );
+        const productoSeleccionado = productosData[categoria]?.find(
+          (p) => p.nombre === producto.productoNombre
+        );
+  
+        if (productoSeleccionado?.cantidad <= 0) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Producto sin stock',
+            text: `El producto ${producto.productoNombre} no tiene unidades disponibles.`,
+          });
+          return;
+        }
+      }
+  
       await createIngreso(productos);
       setVentaExitosa(true);
       toggleModalVenta();
       setProductos([{ productoNombre: '', cantidad: '' }]);
+      Swal.fire({
+        icon: 'success',
+        title: 'Venta registrada',
+        text: 'La venta se ha registrado correctamente.',
+      }).then(() => {
+        window.location.reload(); // Refresca la página después del éxito
+      });
     } catch (error) {
       console.error('Error al crear el ingreso:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un problema al registrar la venta.',
+      });
     }
   };
-
+  
   const handleEgresoSubmit = async (e) => {
     e.preventDefault();
     try {
+      for (const producto of productos) {
+        const categoria = Object.keys(productosData).find((cat) =>
+          productosData[cat].some((p) => p.nombre === producto.productoNombre)
+        );
+        const productoSeleccionado = productosData[categoria]?.find(
+          (p) => p.nombre === producto.productoNombre
+        );
+  
+        if (productoSeleccionado?.cantidad <= 0) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Producto sin stock',
+            text: `El producto ${producto.productoNombre} no tiene unidades disponibles.`,
+          });
+          return;
+        }
+      }
+  
       await createEgreso(productos);
+      setVentaExitosa(true);
       toggleModalEgreso();
       setProductos([{ productoNombre: '', cantidad: '' }]);
+      Swal.fire({
+        icon: 'success',
+        title: 'Gasto registrado',
+        text: 'El gasto se ha registrado correctamente.',
+      }).then(() => {
+        window.location.reload(); // Refresca la página después del éxito
+      });
     } catch (error) {
       console.error('Error al crear el egreso:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un problema al registrar el gasto.',
+      });
     }
   };
+  
+  
 
   // Función para formatear números como pesos colombianos
   const formatCurrency = (amount) => {
@@ -282,12 +346,12 @@ const Balance = () => {
                   {productos.map((producto, index) => (
                     <div key={index} className="producto-fields">
                       <label>Nombre del Producto</label>
-                      <select
+                      <select className='category'
                         value={producto.productoNombre}
                         onChange={(e) => handleProductoChange(index, 'productoNombre', e.target.value)}
                         required
                       >
-                        <option value="">Seleccione un producto</option>
+                        <option value="" className='select'>Seleccione un producto</option>
                         {Object.keys(productosData).map((categoria) => (
                           <optgroup key={categoria} label={categoria}>
                             {productosData[categoria].map((prod) => (
@@ -307,17 +371,17 @@ const Balance = () => {
                         required
                       />
                       {index > 0 && (
-                        <button type="button" onClick={() => handleRemoveProducto(index)}>
+                        <button type="button" className='delete' onClick={() => handleRemoveProducto(index)}>
                           Eliminar Producto
                         </button>
                       )}
                     </div>
                   ))}
                 </div>
-                <button type="button" onClick={handleAddProducto}>
+                <button type="button" className='add' onClick={handleAddProducto}>
                   Agregar Otro Producto
                 </button>
-                <button type="submit">Registrar Venta</button>
+                <button type="submit" className='sell'>Registrar Venta</button>
               </form>
             </div>
           </div>
@@ -330,7 +394,7 @@ const Balance = () => {
               <button className="close-button" onClick={toggleModalEgreso}>
                 X
               </button>
-              <h2>Registrar Egreso</h2>
+              <h2>Nuevo Gasto</h2>
               <form onSubmit={handleEgresoSubmit}>
                 <div>
                   {productos.map((producto, index) => (
@@ -361,17 +425,17 @@ const Balance = () => {
                         required
                       />
                       {index > 0 && (
-                        <button type="button" onClick={() => handleRemoveProducto(index)}>
+                        <button type="button" onClick={() => handleRemoveProducto(index)} className='delete'>
                           Eliminar Producto
                         </button>
                       )}
                     </div>
                   ))}
                 </div>
-                <button type="button" onClick={handleAddProducto}>
+                <button type="button" className='add' onClick={handleAddProducto}>
                   Agregar Otro Producto
                 </button>
-                <button type="submit">Registrar Egreso</button>
+                <button type="submit" className='sell'>Registrar Gasto</button>
               </form>
             </div>
           </div>
