@@ -12,8 +12,6 @@ const Listing = () => {
       { id: 1, name: 'Producto A', imageUrl: '' },
       { id: 2, name: 'Producto B', imageUrl: '' },
       { id: 3, name: 'Producto C', imageUrl: '' },
-      { id: 4, name: 'Producto D', imageUrl: '' },
-      { id: 5, name: 'Producto E', imageUrl: '' },
     ];
 
     // Establecer productos después de cargarlos (simulación de un fetch)
@@ -28,7 +26,7 @@ const Listing = () => {
   return (
     <div className='listingSection'>
       <div className="heading">
-        <h1>Mi Listado</h1>
+        <h3>TOP 3 PRODUCTOS MÁS VENDIDOS</h3>
       </div>
       <div className="secContainer">
         {products.length === 0 ? (
