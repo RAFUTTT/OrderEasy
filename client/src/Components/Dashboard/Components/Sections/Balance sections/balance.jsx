@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import './balance.css';
 import Swal from 'sweetalert2';
 import { getProducts } from '../../../../../api/productService';
-import { createIngreso, createEgreso, getIngresos, getEgresos } from '../../../../../api/movimientosService';
+import { createIngreso, createEgreso, getIngresos, getEgresos, deleteIngreso, deleteEgreso } from '../../../../../api/movimientosService';
+import { FaRegTrashAlt } from "react-icons/fa";
+import { PiNotePencilLight } from "react-icons/pi";
+import { IoMdTrendingUp } from "react-icons/io";
+import { PiTrendDownBold } from "react-icons/pi";
+import { MdAttachMoney } from "react-icons/md";
 
 const Balance = () => {
   const [isModalVentaOpen, setIsModalVentaOpen] = useState(false);
@@ -15,6 +20,7 @@ const Balance = () => {
   const [productosData, setProductosData] = useState({});
   const [ventaExitosa, setVentaExitosa] = useState(false);
   const [noHayProductos, setNoHayProductos] = useState(false);
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -36,17 +42,17 @@ const Balance = () => {
         console.error('Error al obtener los productos:', error);
       }
     };
-  
+
     const fetchMovimientos = async () => {
       try {
         // Cargar ingresos
         const ingresosResponse = await getIngresos();
         setIngresos(ingresosResponse.data);
-        
+
         // Cargar egresos
         const egresosResponse = await getEgresos();
         setEgresos(egresosResponse.data);
-        
+
         // Mostrar ingresos por defecto
         setMostrarIngresos(true);
         setMostrarEgresos(false);
@@ -54,11 +60,11 @@ const Balance = () => {
         console.error('Error al obtener los movimientos:', error);
       }
     };
-  
+
     fetchProducts();
     fetchMovimientos(); // Cargar ingresos y egresos por defecto al cargar la página
   }, []);
-  
+
 
   const cargarIngresos = async () => {
     try {
@@ -82,6 +88,80 @@ const Balance = () => {
     }
   };
 
+  const handleEliminarIngreso = async (id) => {
+    try {
+      const result = await Swal.fire({
+        icon: 'warning',
+        title: '¿Estás seguro?',
+        text: '¡No podrás revertir esta acción!',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+      });
+  
+      if (result.isConfirmed) {
+        await deleteIngreso(id);  // Eliminar el ingreso de la API
+        setIngresos(ingresos.filter(ingreso => ingreso.id !== id));  // Actualiza el estado de los ingresos
+        Swal.fire({
+          icon: 'success',
+          title: 'Ingreso eliminado',
+          text: 'El ingreso ha sido eliminado correctamente.',
+        });
+      } else {
+        Swal.fire({
+          icon: 'info',
+          title: 'Acción cancelada',
+          text: 'El ingreso no fue eliminado.',
+        });
+      }
+    } catch (error) {
+      console.error('Error al eliminar el ingreso:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un problema al eliminar el ingreso.',
+      });
+    }
+  };
+  
+
+  const handleEliminarEgreso = async (id) => {
+    try {
+      const result = await Swal.fire({
+        icon: 'warning',
+        title: '¿Estás seguro?',
+        text: '¡No podrás revertir esta acción!',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+      });
+  
+      if (result.isConfirmed) {
+        await deleteEgreso(id);  // Eliminar el egreso de la API
+        setEgresos(egresos.filter(egreso => egreso.id !== id));  // Actualiza el estado de los egresos
+        Swal.fire({
+          icon: 'success',
+          title: 'Egreso eliminado',
+          text: 'El egreso ha sido eliminado correctamente.',
+        });
+      } else {
+        Swal.fire({
+          icon: 'info',
+          title: 'Acción cancelada',
+          text: 'El egreso no fue eliminado.',
+        });
+      }
+    } catch (error) {
+      console.error('Error al eliminar el egreso:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un problema al eliminar el egreso.',
+      });
+    }
+  };
+  
+  
   const toggleModalVenta = () => {
     setIsModalVentaOpen(!isModalVentaOpen);
   };
@@ -116,7 +196,7 @@ const Balance = () => {
         const productoSeleccionado = productosData[categoria]?.find(
           (p) => p.nombre === producto.productoNombre
         );
-  
+
         if (productoSeleccionado?.cantidad <= 0) {
           Swal.fire({
             icon: 'error',
@@ -126,7 +206,7 @@ const Balance = () => {
           return;
         }
       }
-  
+
       await createIngreso(productos);
       setVentaExitosa(true);
       toggleModalVenta();
@@ -147,7 +227,7 @@ const Balance = () => {
       });
     }
   };
-  
+
   const handleEgresoSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -158,7 +238,7 @@ const Balance = () => {
         const productoSeleccionado = productosData[categoria]?.find(
           (p) => p.nombre === producto.productoNombre
         );
-  
+
         if (productoSeleccionado?.cantidad <= 0) {
           Swal.fire({
             icon: 'error',
@@ -168,7 +248,7 @@ const Balance = () => {
           return;
         }
       }
-  
+
       await createEgreso(productos);
       setVentaExitosa(true);
       toggleModalEgreso();
@@ -189,8 +269,8 @@ const Balance = () => {
       });
     }
   };
-  
-  
+
+
 
   // Función para formatear números como pesos colombianos
   const formatCurrency = (amount) => {
@@ -243,16 +323,19 @@ const Balance = () => {
         <div className="dashboard-card">
           <div className="balance-row">
             <div className="balance-item">
+            <MdAttachMoney className='icon-balance'/>
               <h3>Balance General</h3>
               <p>{formatCurrency(calcularBalanceGeneral())}</p>
             </div>
             <div className="balance-item">
+              <IoMdTrendingUp className='icon-ingreso' />
               <h3>Ingresos Totales</h3>
-              <p>{formatCurrency(calcularIngresosTotales())}</p>
+              <p className='price-ingresos'>{formatCurrency(calcularIngresosTotales())}</p>
             </div>
             <div className="balance-item">
+              <PiTrendDownBold className='icon-egreso'/>
               <h3>Egresos Totales</h3>
-              <p>{formatCurrency(calcularEgresosTotales())}</p>
+              <p className='price-egresos'>{formatCurrency(calcularEgresosTotales())}</p>
             </div>
           </div>
         </div>
@@ -292,6 +375,12 @@ const Balance = () => {
                       <td>{ingreso.productoNombre}</td>
                       <td>{ingreso.cantidad}</td>
                       <td>{formatCurrency(ingreso.total)}</td>
+                      <td className="buttons">
+                        <button className="update"><PiNotePencilLight /></button>
+                        <button className="deletee" onClick={() => handleEliminarIngreso(ingreso.id)}>
+                          <FaRegTrashAlt />
+                        </button>
+                      </td>
                     </tr>
                   ))
                 )}
@@ -314,20 +403,30 @@ const Balance = () => {
                 </tr>
               </thead>
               <tbody>
-                {egresos.length === 0 ? (
-                  <tr>
-                    <td colSpan="4">No hay egresos registrados</td>
+              {egresos.length === 0 ? (
+                <tr>
+                  <td colSpan="4">No hay egresos registrados</td>
+                </tr>
+              ) : (
+                ordenarEgresosPorFecha().map((egreso, index) => (
+                  <tr key={index}>
+                    <td>{new Date(egreso.fecha).toLocaleDateString()}</td>
+                    <td>{egreso.productoNombre}</td>
+                    <td>{egreso.cantidad}</td>
+                    <td>{formatCurrency(egreso.total)}</td>
+                    <td className="buttons">
+                      <button className="update"><PiNotePencilLight /></button>
+                      <button 
+                        className="deletee" 
+                        onClick={() => handleEliminarEgreso(egreso.id)} // Eliminar el egreso correspondiente
+                      >
+                        <FaRegTrashAlt />
+                      </button>
+                    </td>
                   </tr>
-                ) : (
-                  ordenarEgresosPorFecha().map((egreso, index) => (
-                    <tr key={index}>
-                      <td>{new Date(egreso.fecha).toLocaleDateString()}</td>
-                      <td>{egreso.productoNombre}</td>
-                      <td>{egreso.cantidad}</td>
-                      <td>{formatCurrency(egreso.total)}</td>
-                    </tr>
-                  ))
-                )}
+                ))
+              )}
+
               </tbody>
             </table>
           </div>
