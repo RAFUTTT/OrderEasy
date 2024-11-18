@@ -26,6 +26,7 @@
   font-size: var(--h1FontSize);
   color: var(--whiteColor);
   font-weight: 700;
+  align-items: center;
 }
 .topSection .headerSection .title p {
   font-size: var(--normalFontSize);
