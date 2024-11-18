@@ -288,3 +288,47 @@ th {
 .button-submit:hover {
   background-color: #218838;
 }
+
+h2 {
+  font-weight: 700;
+}
+
+.sell,
+.add {
+  background-color: #218838;
+  border: none;
+  margin: 10px;
+  border-radius: 5px;
+  color: white;
+  font-size: 15px;
+  text-align: center;
+  text-decoration: none;
+  padding: 8px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+.sell:hover,
+.add:hover {
+  background-color: #064814;
+  transform: scale(1.05);
+}
+
+.delete {
+  background-color: #dc3545;
+  border: none;
+  margin: 10px;
+  border-radius: 5px;
+  color: white;
+  font-size: 15px;
+  text-align: center;
+  text-decoration: none;
+  padding: 8px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+.delete:hover {
+  background-color: #73000c;
+  transform: scale(1.05);
+}

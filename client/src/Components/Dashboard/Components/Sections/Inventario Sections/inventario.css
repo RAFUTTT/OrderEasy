@@ -40,6 +40,13 @@ html {
   flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
+  /* Fondo semi-transparente para el overlay */
+  /* Estilo del contenido del modal */
+  /* Título del modal */
+  /* Párrafos dentro del modal */
+  /* Inputs dentro del modal */
+  /* Botón de cierre */
+  /* Animación para la entrada del modal */
 }
 .main-content .top-bar {
   display: flex;
@@ -157,6 +164,92 @@ html {
   border-radius: 5px;
   margin-bottom: 20px;
 }
+.main-content .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro translúcido */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.main-content .modal-content {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+  position: relative;
+}
+.main-content .modal-content h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+.main-content .modal-content p {
+  margin: 13px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #555;
+}
+.main-content .modal-content input,
+.main-content .modal-content select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid green;
+  background-color: rgb(224, 224, 224);
+  border-radius: 5px;
+  font-size: 1rem;
+}
+.main-content .modal-content .close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #888;
+  transition: color 0.2s ease;
+}
+.main-content .modal-content .close-button:hover {
+  color: #333;
+}
+.main-content .edit {
+  background-color: #dfcb13;
+  border: none;
+  margin: 10px;
+  border-radius: 5px;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  padding: 10px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+.main-content .edit:hover {
+  background-color: #808202;
+  transform: scale(1.05);
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 @keyframes slide-in {
   from {
     transform: translateY(-100%);
@@ -175,107 +268,5 @@ html {
   to {
     transform: translateY(-100%);
     opacity: 0;
-  }
-}
-
-/* Fondo semi-transparente para el overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro translúcido */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-/* Estilo del contenido del modal */
-.modal-content {
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease-in-out;
-  position: relative;
-}
-
-/* Título del modal */
-.modal-content h2 {
-  font-size: 1.5rem;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-/* Párrafos dentro del modal */
-.modal-content p {
-  margin: 13px 0;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #555;
-}
-
-/* Inputs dentro del modal */
-.modal-content input,
-.modal-content select {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border: 1px solid green;
-  background-color: rgb(224, 224, 224);
-  border-radius: 5px;
-  font-size: 1rem;
-}
-
-/* Botón de cierre */
-.modal-content .close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: #888;
-  transition: color 0.2s ease;
-}
-
-.modal-content .close-button:hover {
-  color: #333;
-}
-
-.edit {
-  background-color: #dfcb13;
-  border: none;
-  margin: 10px;
-  border-radius: 5px;
-  color: white;
-  font-size: 16px;
-  text-align: center;
-  text-decoration: none;
-  padding: 10px;
-  font-weight: 400;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-}
-.edit:hover {
-  background-color: #808202;
-  transform: scale(1.05);
-}
-
-/* Animación para la entrada del modal */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
   }
 }/*# sourceMappingURL=inventario.css.map */

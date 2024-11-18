@@ -102,8 +102,7 @@ html {
 .boton-container {
   display: flex;
   width: 100%;
-  justify-content: space-between;
-  /* Esto asegura que los botones se distribuyan de manera equitativa */
+  justify-content: space-between; /* Esto asegura que los botones se distribuyan de manera equitativa */
 }
 
 /* Estilos para los botones */
@@ -117,8 +116,7 @@ html {
   font-size: 16px;
   margin: 5px;
   transition: background-color 0.3s, transform 0.3s;
-  width: 48%;
-  /* Hacemos que cada botón ocupe un 50% del ancho del contenedor, con un margen de separación */
+  width: 48%; /* Hacemos que cada botón ocupe un 50% del ancho del contenedor, con un margen de separación */
 }
 
 .btn-ingresos {
@@ -308,6 +306,7 @@ h2 {
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
 }
+
 .sell:hover,
 .add:hover {
   background-color: #064814;
@@ -328,6 +327,7 @@ h2 {
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
 }
+
 .delete:hover {
   background-color: #73000c;
   transform: scale(1.05);
