@@ -3,7 +3,7 @@ import './inventario.css';
 import CrearProducto from './Formularios/CrearProducto';
 import CrearCategoria from './Formularios/CrearCategoria';
 import { getProducts, updateProduct, deleteProduct } from '../../../../../api/productService';
-import { getCategories } from '../../../../../api/categoryService';
+import { getCategories, deleteCategory } from '../../../../../api/categoryService';
 import Swal from 'sweetalert2';
 
 const Inventario = () => {
@@ -171,6 +171,46 @@ const Inventario = () => {
     setEditableProduct(selectedProduct);
   };
 
+  // Función para manejar la eliminación de la categoría
+  const handleDeleteCategory = async () => {
+    Swal.fire({
+      title: `¿Estás seguro de que deseas eliminar la categoría "${selectedCategory}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          // Llamamos a la API para eliminar la categoría usando el nombre de la categoría seleccionada
+          await deleteCategory(selectedCategory);
+
+          // Actualizamos el estado de categorías para eliminar la categoría seleccionada
+          setCategories(categories.filter((category) => category.nombre !== selectedCategory));
+
+          // Restablecer el estado de categoría seleccionada
+          setSelectedCategory('');
+
+          // Notificación de éxito
+          Swal.fire({
+            icon: 'success',
+            title: 'Categoría eliminada',
+            text: `La categoría "${selectedCategory}" ha sido eliminada con éxito.`,
+          });
+        } catch (error) {
+          console.error("Error al eliminar la categoría:", error);
+          // Notificación de error
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un problema al eliminar la categoría. Por favor, inténtalo de nuevo más tarde.',
+          });
+        }
+      }
+    });
+  };
+
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditableProduct({ ...editableProduct, [name]: value });
@@ -253,10 +293,17 @@ const Inventario = () => {
             ) : (
               <p>Selecciona una categoría para ver sus detalles.</p>
             )}
+
+            {/* Agregar el botón de eliminar categoría */}
+            {selectedCategory && (
+              <button className="delete" onClick={handleDeleteCategory}>Eliminar Categoría</button>
+            )}
+
             <button className="delete" onClick={toggleGestionarCategoria}>Cerrar</button>
           </div>
         </div>
       )}
+
 
       {selectedProduct && (
         <div className="modal-overlay" onClick={closeProductDetails}>
