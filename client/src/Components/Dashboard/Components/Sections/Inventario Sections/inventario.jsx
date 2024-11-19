@@ -3,7 +3,7 @@ import './inventario.css';
 import CrearProducto from './Formularios/CrearProducto';
 import CrearCategoria from './Formularios/CrearCategoria';
 import { getProducts, updateProduct, deleteProduct } from '../../../../../api/productService';
-import { getCategories, deleteCategory } from '../../../../../api/categoryService';
+import { getCategories, deleteCategory, updateCategory } from '../../../../../api/categoryService';
 import Swal from 'sweetalert2';
 
 const Inventario = () => {
@@ -19,6 +19,9 @@ const Inventario = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editableProduct, setEditableProduct] = useState(null);
 
+
+
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -28,19 +31,27 @@ const Inventario = () => {
         console.error('Error al obtener los productos:', error);
       }
     };
-
+  
     const fetchCategories = async () => {
       try {
         const response = await getCategories();
         setCategories(response.data);
+        // Si hay una categoría seleccionada, buscamos sus detalles y los seteamos
+        if (selectedCategory) {
+          const selectedCategoryDetails = response.data.find(
+            (category) => category.nombre === selectedCategory
+          );
+          setSelectedCategoryDetails(selectedCategoryDetails);
+        }
       } catch (error) {
         console.error('Error al obtener las categorías:', error);
       }
     };
-
+  
     fetchProducts();
     fetchCategories();
-  }, []);
+  }, [selectedCategory]); // Se vuelve a ejecutar cuando cambia selectedCategory
+  
 
   const toggleModalProducto = () => {
     setIsModalProductoOpen(!isModalProductoOpen);
@@ -210,6 +221,46 @@ const Inventario = () => {
     });
   };
 
+  const handleSaveCategoryChanges = async () => {
+    try {
+      const updatedCategory = { ...selectedCategoryDetails };
+      
+      // Realizar la llamada a la API para actualizar la categoría
+      await updateCategory(updatedCategory.nombre, updatedCategory);
+      
+      // Actualizar la lista de categorías en el estado
+      setCategories(categories.map((category) =>
+        category.nombre === selectedCategoryDetails.nombre ? updatedCategory : category
+      ));
+  
+      // Cerrar el modo de edición
+      setIsEditing(false);
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'Categoría actualizada',
+        text: 'Los cambios se han guardado correctamente.',
+      });
+  
+    } catch (error) {
+      console.error("Error al actualizar la categoría:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un problema al actualizar la categoría. Intenta nuevamente más tarde.',
+      });
+    }
+  };
+  
+
+  const handleInputChangeCategory = (e) => {
+    const { name, value } = e.target;
+    // Crear una copia del objeto para evitar mutaciones directas
+    const updatedCategoryDetails = { ...selectedCategoryDetails };
+    updatedCategoryDetails[name] = value;
+    setSelectedCategoryDetails(updatedCategoryDetails);
+  };
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -277,9 +328,9 @@ const Inventario = () => {
         <div className="modal-overlay" onClick={toggleGestionarCategoria}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>Gestionar Categoría</h2>
-            <select value={selectedCategory} onChange={handleCategoryChange}>
+            <select value={selectedCategory} onChange={handleCategoryChange} disabled={isEditing}>
               <option value="">Seleccionar Categoría</option>
-              {categories.map(category => (
+              {categories.map((category) => (
                 <option key={category.id} value={category.nombre}>
                   {category.nombre}
                 </option>
@@ -287,22 +338,71 @@ const Inventario = () => {
             </select>
             {selectedCategoryDetails ? (
               <div className="category-details">
-                <p><strong>Nombre:</strong> {selectedCategoryDetails.nombre}</p>
-                <p><strong>Descripción:</strong> {selectedCategoryDetails.descripcion}</p>
+                {isEditing ? (
+                  <>
+                  <label>
+                    <strong>Nombre:</strong>
+                    <input
+                      type="text"
+                      name="nombre"
+                      value={selectedCategoryDetails.nombre}
+                      onChange={handleInputChangeCategory}
+                    />
+                  </label>
+                  <label>
+                    <strong>Descripción:</strong>
+                    <input
+                      type="text"
+                      name="descripcion"
+                      value={selectedCategoryDetails.descripcion}
+                      onChange={handleInputChangeCategory}
+                    />
+                  </label>
+                </>
+                ) : (
+                <>
+                  <p><strong>Nombre:</strong> {selectedCategoryDetails.nombre}</p>
+                  <p><strong>Descripción:</strong> {selectedCategoryDetails.descripcion}</p>
+                </>
+                )
+              }
               </div>
             ) : (
               <p>Selecciona una categoría para ver sus detalles.</p>
             )}
 
-            {/* Agregar el botón de eliminar categoría */}
-            {selectedCategory && (
-              <button className="delete" onClick={handleDeleteCategory}>Eliminar Categoría</button>
+            {isEditing ? (
+              // Botones en modo de edición
+              <>
+                <button className="update" onClick={handleSaveCategoryChanges}>Guardar</button>
+                <button className="cancel" onClick={() => setIsEditing(false)}>
+                  Cancelar
+                </button>
+              </>
+            ) : (
+              // Botones en modo normal
+              <>
+                {selectedCategory && (
+                  <button className="update" onClick={() => setIsEditing(true)}>
+                    Editar
+                  </button>
+                )}
+                {selectedCategory && (
+                  <button className="delete" onClick={handleDeleteCategory}>
+                    Eliminar
+                  </button>
+                )}
+              </>
             )}
 
-            <button className="delete" onClick={toggleGestionarCategoria}>Cerrar</button>
+            <button className="delete" onClick={toggleGestionarCategoria}>
+              Cerrar
+            </button>
           </div>
         </div>
       )}
+
+
 
 
       {selectedProduct && (
