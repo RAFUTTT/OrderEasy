@@ -2,6 +2,7 @@ import React from "react";
 import { NavLink, Navigate, useNavigate } from "react-router-dom";
 import "./sidebar.css";
 import { useAuth } from '../../../../auth/AuthContext'
+import Swal from "sweetalert2";
 
 // Importar Iconos y Logo
 import logo from "../assets/logo2.png";
@@ -85,16 +86,35 @@ const Sidebar = () => {
             </NavLink>
           </li>
 
-          <li className="listItem" onClick={handleLogout}>
-            <NavLink
-              to="/login"
-              className={({ isActive }) =>
-                isActive ? "menuLink flex active" : "menuLink flex"
-              }
-            >
+          <li
+            className="listItem"
+            onClick={(e) => {
+              e.preventDefault(); // Prevenir la redirección automática
+              Swal.fire({
+                title: '¿Estás seguro de que deseas cerrar sesión?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  handleLogout(); // Aquí llamamos a tu función de logout
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Sesión cerrada',
+                    text: 'Has cerrado sesión exitosamente.',
+                  }).then(() => {
+                    // Redirigir al login después de cerrar sesión
+                    window.location.href = '/login';
+                  });
+                }
+              });
+            }}
+          >
+            <div className="menuLink flex">
               <IoExitOutline className="icon" />
               <h3 className="smallText">Salir</h3>
-            </NavLink>
+            </div>
           </li>
         </ul>
       </div>
