@@ -10,4 +10,14 @@ const getCategories = () => {
   return axios.get(`${API_URL}/categorias`);
 };
 
-export { createCategory, getCategories };
+// Actualizar categoría por nombre
+const updateCategory = (nombre, updatedCategory) => {
+  return axios.put(`${API_URL}/categorias/${nombre}`, updatedCategory);
+};
+
+// Eliminar categoría por nombre
+const deleteCategory = (nombre) => {
+  return axios.delete(`${API_URL}/categorias/${nombre}`);
+};
+
+export { createCategory, getCategories, updateCategory, deleteCategory };
