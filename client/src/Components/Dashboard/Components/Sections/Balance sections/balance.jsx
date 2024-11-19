@@ -376,7 +376,6 @@ const Balance = () => {
                       <td>{ingreso.cantidad}</td>
                       <td>{formatCurrency(ingreso.total)}</td>
                       <td className="buttons">
-                        <button className="update"><PiNotePencilLight /></button>
                         <button className="deletee" onClick={() => handleEliminarIngreso(ingreso.id)}>
                           <FaRegTrashAlt />
                         </button>
@@ -415,7 +414,6 @@ const Balance = () => {
                     <td>{egreso.cantidad}</td>
                     <td>{formatCurrency(egreso.total)}</td>
                     <td className="buttons">
-                      <button className="update"><PiNotePencilLight /></button>
                       <button 
                         className="deletee" 
                         onClick={() => handleEliminarEgreso(egreso.id)} // Eliminar el egreso correspondiente
