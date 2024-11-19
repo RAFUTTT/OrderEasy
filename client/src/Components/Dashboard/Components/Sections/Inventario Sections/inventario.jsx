@@ -14,43 +14,54 @@ const Inventario = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategoryDetails, setSelectedCategoryDetails] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editableProduct, setEditableProduct] = useState(null);
 
 
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const response = await getProducts();
+      setProducts(response.data);
+    } catch (error) {
+      console.error('Error al obtener los productos:', error);
+    }
+  };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await getCategories();
+      setCategories(response.data);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getProducts();
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Error al obtener los productos:', error);
+      // Solo se hace la búsqueda de detalles de la categoría si `selectedCategory` está definido
+      if (selectedCategory) {
+        const selectedCategoryDetails = response.data.find(
+          (category) => category.nombre === selectedCategory
+        );
+        setSelectedCategoryDetails(selectedCategoryDetails || {});
       }
-    };
-  
-    const fetchCategories = async () => {
-      try {
-        const response = await getCategories();
-        setCategories(response.data);
-        // Si hay una categoría seleccionada, buscamos sus detalles y los seteamos
-        if (selectedCategory) {
-          const selectedCategoryDetails = response.data.find(
-            (category) => category.nombre === selectedCategory
-          );
-          setSelectedCategoryDetails(selectedCategoryDetails);
-        }
-      } catch (error) {
-        console.error('Error al obtener las categorías:', error);
-      }
-    };
-  
-    fetchProducts();
-    fetchCategories();
-  }, [selectedCategory]); // Se vuelve a ejecutar cuando cambia selectedCategory
+    } catch (error) {
+      console.error('Error al obtener las categorías:', error);
+    }
+  };
+
+  fetchProducts();
+  fetchCategories();
+}, []); // Se ejecuta solo una vez al montar el componente
+
+// Este efecto se activa cuando `selectedCategory` cambia y actualiza los detalles de la categoría
+useEffect(() => {
+  if (selectedCategory) {
+    const selectedCategoryDetails = categories.find(
+      (category) => category.nombre === selectedCategory
+    );
+    setSelectedCategoryDetails(selectedCategoryDetails || {});
+  }
+}, [selectedCategory, categories]); // Se ejecuta cuando cambia `selectedCategory` o `categories`
+ // Se vuelve a ejecutar cuando cambia selectedCategory
   
 
   const toggleModalProducto = () => {
@@ -66,9 +77,9 @@ const Inventario = () => {
     setIsGestionarCategoriaOpen(!isGestionarCategoriaOpen);
   };
 
-  const selectedCategoryDetails = categories.find(
-    (category) => category.nombre === selectedCategory
-  );
+  // const selectedCategoryDetails = categories.find(
+  //   (category) => category.nombre === selectedCategory
+  // );
 
   const handleProductoSubmit = (e) => {
     e.preventDefault();
@@ -223,25 +234,30 @@ const Inventario = () => {
 
   const handleSaveCategoryChanges = async () => {
     try {
+      // Guardamos el nombre original de la categoría antes de hacer el cambio
+      const currentCategoryName = selectedCategoryDetails.nombre;
+      
+      // Crear un objeto con los detalles de la categoría actualizada
       const updatedCategory = { ...selectedCategoryDetails };
       
-      // Realizar la llamada a la API para actualizar la categoría
-      await updateCategory(updatedCategory.nombre, updatedCategory);
+      // Realizar la llamada a la API con el nombre original (currentCategoryName)
+      await updateCategory(currentCategoryName, updatedCategory);
       
-      // Actualizar la lista de categorías en el estado
+      // Actualizar el estado local con el nombre actualizado
       setCategories(categories.map((category) =>
-        category.nombre === selectedCategoryDetails.nombre ? updatedCategory : category
+        category.nombre === currentCategoryName ? updatedCategory : category
       ));
-  
+      
       // Cerrar el modo de edición
       setIsEditing(false);
       
+      // Mostrar el mensaje de éxito
       Swal.fire({
         icon: 'success',
         title: 'Categoría actualizada',
         text: 'Los cambios se han guardado correctamente.',
       });
-  
+      
     } catch (error) {
       console.error("Error al actualizar la categoría:", error);
       Swal.fire({
@@ -340,15 +356,6 @@ const Inventario = () => {
               <div className="category-details">
                 {isEditing ? (
                   <>
-                  <label>
-                    <strong>Nombre:</strong>
-                    <input
-                      type="text"
-                      name="nombre"
-                      value={selectedCategoryDetails.nombre}
-                      onChange={handleInputChangeCategory}
-                    />
-                  </label>
                   <label>
                     <strong>Descripción:</strong>
                     <input
