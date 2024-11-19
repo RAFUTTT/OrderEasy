@@ -2,16 +2,60 @@ import React from 'react';
 import './Listing.css';
 
 const Listing = () => {
-
   return (
-    <div className='listingSection'>
+    <div className="main-content">
+      <div className='listingSection'>
       <h1>Order Easy 1.0!</h1>
-      <p><strong>Estamos emocionados de anunciar que OrderEasy ha alcanzado su primera versión: 1.0. Esta versión inicial marca el comienzo de un emocionante viaje en el que seguiremos mejorando y expandiendo nuestras funcionalidades.
-
-        Es importante mencionar que la aplicación estará en constante desarrollo, por lo que podrás esperar actualizaciones periódicas con nuevas características, correcciones y optimizaciones. Agradecemos tu paciencia y apoyo mientras trabajamos para ofrecerte la mejor experiencia posible.
-
-        ¡Gracias por ser parte de esta etapa inicial de OrderEasy! 🚀</strong></p>
+      <div>
+        <p>NOTAS DE VERSIÓN (PROYECTO EN DESARROLLO)</p>
+        <p>VERSION 1.0 (BETA):</p>
+        <ul>
+          <li>Vistas Agregadas:
+            <ul>
+              <li>Vista de Inventario</li>
+              <li>Vista de Balance</li>
+              <li>Vista de Estadísticas</li>
+            </ul>
+          </li>
+          <li>Funcionalidades Agregadas:
+            <ul>
+              <li>Categorías:
+                <ul>
+                  <li>Creación de Categorías</li>
+                  <li>Edición de Categorías</li>
+                  <li>Eliminación de Categorías</li>
+                  <li>Filtro por Categorías</li>
+                </ul>
+              </li>
+              <li>Productos:
+                <ul>
+                  <li>Creación de Productos</li>
+                  <li>Edición de Productos</li>
+                  <li>Eliminación de Productos</li>
+                  <li>Barra de búsqueda de productos</li>
+                </ul>
+              </li>
+              <li>Balance:
+                <ul>
+                  <li>Agregación de ingresos del negocio</li>
+                  <li>Agregación de egresos del negocio</li>
+                  <li>Tabla de visualización de ingresos y egresos</li>
+                  <li>Visualización de ingresos totales, egresos totales y balance</li>
+                </ul>
+              </li>
+              <li>Visualizaciones de barras y de líneas:
+                <ul>
+                  <li>Visualización de diagrama de líneas con un balance mensual</li>
+                  <li>Visualización de diagrama de barras con la información de ventas de productos</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
     </div>
+    </div>
+    
   );
 };
 

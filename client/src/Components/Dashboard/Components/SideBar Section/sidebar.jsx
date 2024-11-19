@@ -46,7 +46,7 @@ const Sidebar = () => {
               }
             >
               <IoMdSpeedometer className="icon" />
-              <h3 className="smallText">Dashboard</h3>
+              <h3 className="smallText">Inicio</h3>
             </NavLink>
           </li>
 
