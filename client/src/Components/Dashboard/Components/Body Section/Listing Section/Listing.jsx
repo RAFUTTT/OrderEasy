@@ -1,46 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './Listing.css';
 
 const Listing = () => {
-  // Estado para almacenar los productos
-  const [products, setProducts] = useState([]);
-
-  // Simulando una llamada para obtener productos (por ejemplo, desde una API)
-  useEffect(() => {
-    // Simulación de productos
-    const fetchedProducts = [
-      { id: 1, name: 'Producto A', imageUrl: '' },
-      { id: 2, name: 'Producto B', imageUrl: '' },
-      { id: 3, name: 'Producto C', imageUrl: '' },
-    ];
-
-    // Establecer productos después de cargarlos (simulación de un fetch)
-    setProducts(fetchedProducts);
-
-    // Cleanup (si hubiera algún evento a limpiar)
-    return () => {
-      // Puedes hacer cleanup de algún listener o evento aquí si fuera necesario
-    };
-  }, []); // [] para ejecutarse solo al montar el componente
 
   return (
     <div className='listingSection'>
-      <div className="heading">
-        <h3>TOP 3 PRODUCTOS MÁS VENDIDOS</h3>
-      </div>
-      <div className="secContainer">
-        {products.length === 0 ? (
-          <p>Cargando productos...</p>
-        ) : (
-          products.map((product) => (
-            <div className="singleItem" key={product.id}>
-                <div className="imgDiv">
-                </div>
-              <h3>{product.name}</h3>
-            </div>
-          ))
-        )}
-      </div>
+      <h1>Order Easy 1.0!</h1>
+      <p><strong>Estamos emocionados de anunciar que OrderEasy ha alcanzado su primera versión: 1.0. Esta versión inicial marca el comienzo de un emocionante viaje en el que seguiremos mejorando y expandiendo nuestras funcionalidades.
+
+        Es importante mencionar que la aplicación estará en constante desarrollo, por lo que podrás esperar actualizaciones periódicas con nuevas características, correcciones y optimizaciones. Agradecemos tu paciencia y apoyo mientras trabajamos para ofrecerte la mejor experiencia posible.
+
+        ¡Gracias por ser parte de esta etapa inicial de OrderEasy! 🚀</strong></p>
     </div>
   );
 };

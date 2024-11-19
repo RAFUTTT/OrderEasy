@@ -10,6 +10,7 @@ const Inventario = () => {
   const [isModalProductoOpen, setIsModalProductoOpen] = useState(false);
   const [isModalCategoriaOpen, setIsModalCategoriaOpen] = useState(false);
   const [modalClass, setModalClass] = useState('');
+  const [isGestionarCategoriaOpen, setIsGestionarCategoriaOpen] = useState(false);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -50,6 +51,13 @@ const Inventario = () => {
     setIsModalCategoriaOpen(!isModalCategoriaOpen);
     setModalClass(isModalCategoriaOpen ? 'slide-out' : 'slide-in');
   };
+  const toggleGestionarCategoria = () => {
+    setIsGestionarCategoriaOpen(!isGestionarCategoriaOpen);
+  };
+
+  const selectedCategoryDetails = categories.find(
+    (category) => category.nombre === selectedCategory
+  );
 
   const handleProductoSubmit = (e) => {
     e.preventDefault();
@@ -85,78 +93,78 @@ const Inventario = () => {
     setIsEditing(true);
   };
 
-const handleDeleteClick = async () => {
+  const handleDeleteClick = async () => {
     Swal.fire({
-        title: `¿Estás seguro de que deseas eliminar el producto "${selectedProduct.nombre}"?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar',
+      title: `¿Estás seguro de que deseas eliminar el producto "${selectedProduct.nombre}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
     }).then(async (result) => {
-        if (result.isConfirmed) {
-            try {
-                await deleteProduct(selectedProduct.nombre); // Usamos nombre en lugar de id
-                setProducts(products.filter((product) => product.nombre !== selectedProduct.nombre)); // Filtramos usando el nombre
-                closeProductDetails();
-                console.log("Producto eliminado");
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Producto eliminado',
-                    text: `El producto "${selectedProduct.nombre}" ha sido eliminado con éxito.`,
-                });
-            } catch (error) {
-                console.error("Error al eliminar el producto:", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Hubo un problema al eliminar el producto. Por favor, inténtalo de nuevo más tarde.'
-                });
-            }
+      if (result.isConfirmed) {
+        try {
+          await deleteProduct(selectedProduct.nombre); // Usamos nombre en lugar de id
+          setProducts(products.filter((product) => product.nombre !== selectedProduct.nombre)); // Filtramos usando el nombre
+          closeProductDetails();
+          console.log("Producto eliminado");
+          Swal.fire({
+            icon: 'success',
+            title: 'Producto eliminado',
+            text: `El producto "${selectedProduct.nombre}" ha sido eliminado con éxito.`,
+          });
+        } catch (error) {
+          console.error("Error al eliminar el producto:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un problema al eliminar el producto. Por favor, inténtalo de nuevo más tarde.'
+          });
         }
+      }
     });
-};
+  };
 
 
-const handleSaveChanges = async () => {
-  try {
-    // Aquí usamos el nombre original de selectedProduct para hacer la consulta
-    console.log("Producto a actualizar:", editableProduct); // Verifica que editableProduct tiene los datos correctos
+  const handleSaveChanges = async () => {
+    try {
+      // Aquí usamos el nombre original de selectedProduct para hacer la consulta
+      console.log("Producto a actualizar:", editableProduct); // Verifica que editableProduct tiene los datos correctos
 
-    // Realizamos la consulta con el nombre original (nombre de selectedProduct)
-    const productToUpdate = { ...editableProduct }; // Creamos una copia de editableProduct para evitar que se edite mientras hacemos la consulta.
+      // Realizamos la consulta con el nombre original (nombre de selectedProduct)
+      const productToUpdate = { ...editableProduct }; // Creamos una copia de editableProduct para evitar que se edite mientras hacemos la consulta.
 
-    // Hacemos la consulta usando el nombre original de selectedProduct
-    await updateProduct(selectedProduct.nombre, productToUpdate);
+      // Hacemos la consulta usando el nombre original de selectedProduct
+      await updateProduct(selectedProduct.nombre, productToUpdate);
 
-    // Ahora que el producto ha sido actualizado, lo actualizamos en el estado
-    setProducts(products.map(product => 
-      product.nombre === selectedProduct.nombre ? productToUpdate : product
-    ));
+      // Ahora que el producto ha sido actualizado, lo actualizamos en el estado
+      setProducts(products.map(product =>
+        product.nombre === selectedProduct.nombre ? productToUpdate : product
+      ));
 
-    setIsEditing(false);
-    setSelectedProduct(productToUpdate);
+      setIsEditing(false);
+      setSelectedProduct(productToUpdate);
 
-    // SweetAlert de éxito
-    Swal.fire({
-      icon: 'success',
-      title: '¡Producto actualizado!',
-      text: 'Los cambios se han guardado correctamente.',
-      confirmButtonText: 'Aceptar'
-    });
+      // SweetAlert de éxito
+      Swal.fire({
+        icon: 'success',
+        title: '¡Producto actualizado!',
+        text: 'Los cambios se han guardado correctamente.',
+        confirmButtonText: 'Aceptar'
+      });
 
-    console.log("Producto actualizado");
-  } catch (error) {
-    // SweetAlert de error
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Hubo un problema al actualizar el producto.',
-      confirmButtonText: 'Aceptar'
-    });
+      console.log("Producto actualizado");
+    } catch (error) {
+      // SweetAlert de error
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un problema al actualizar el producto.',
+        confirmButtonText: 'Aceptar'
+      });
 
-    console.error("Error al actualizar el producto:", error);
-  }
-};
+      console.error("Error al actualizar el producto:", error);
+    }
+  };
 
   const handleCancelEdit = () => {
     setIsEditing(false);
@@ -180,11 +188,12 @@ const handleSaveChanges = async () => {
         <button className="create-product" onClick={toggleModalProducto}>
           Crear Producto
         </button>
-        
+
         <div className="search-bar">
           <button className="create-category" onClick={toggleModalCategoria}>
             Crear Categoria
           </button>
+          <button className="create-category" onClick={toggleGestionarCategoria}>Gestionar Categoria</button>
           <select value={selectedCategory} onChange={handleCategoryChange}>
             <option value="">Todas las categorias</option>
             {categories.map(category => (
@@ -224,11 +233,36 @@ const handleSaveChanges = async () => {
         <CrearCategoria handleSubmit={handleCategoriaSubmit} toggleModalCategoria={toggleModalCategoria} />
       )}
 
+      {isGestionarCategoriaOpen && (
+        <div className="modal-overlay" onClick={toggleGestionarCategoria}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Gestionar Categoría</h2>
+            <select value={selectedCategory} onChange={handleCategoryChange}>
+              <option value="">Seleccionar Categoría</option>
+              {categories.map(category => (
+                <option key={category.id} value={category.nombre}>
+                  {category.nombre}
+                </option>
+              ))}
+            </select>
+            {selectedCategoryDetails ? (
+              <div className="category-details">
+                <p><strong>Nombre:</strong> {selectedCategoryDetails.nombre}</p>
+                <p><strong>Descripción:</strong> {selectedCategoryDetails.descripcion}</p>
+              </div>
+            ) : (
+              <p>Selecciona una categoría para ver sus detalles.</p>
+            )}
+            <button className="delete" onClick={toggleGestionarCategoria}>Cerrar</button>
+          </div>
+        </div>
+      )}
+
       {selectedProduct && (
         <div className="modal-overlay" onClick={closeProductDetails}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>
-              
+
               {isEditing ? (
                 <input
                   type="text"
