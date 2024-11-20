@@ -254,6 +254,7 @@ th {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+
 }
 
 .modal {
@@ -385,4 +386,130 @@ h2 {
   font-weight: 400;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
+}
+
+label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+  display: block;
+}
+
+/* Estilos para el select */
+.category {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #333;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Estilo cuando el select tiene el foco (focus) */
+.category:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+
+
+/* Estilos para el contenedor del modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Estilos para la ventana del modal */
+.modal {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 500px;
+}
+
+/* Estilo para el botón de cerrar */
+.close-button {
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  color: #333;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* Estilo para el encabezado */
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #333;
+}
+
+/* Estilo para los campos de entrada del producto */
+.producto-fields {
+  margin-bottom: 15px;
+}
+
+/* Estilo para la etiqueta <label> */
+.producto-fields label {
+  display: block;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+/* Estilo específico para el select del Nombre del Producto */
+select {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fafafa;
+  color: #333;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+/* Estilo cuando el select recibe el foco (focus) */
+select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Estilo para las opciones dentro del select */
+select option {
+  padding: 10px;
+}
+
+/* Estilos responsivos para pantallas pequeñas */
+@media (max-width: 600px) {
+  .modal {
+    width: 95%;
+    padding: 15px;
+  }
+  select {
+    padding: 10px;
+    font-size: 12px;
+  }
 }

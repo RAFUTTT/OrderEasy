@@ -382,7 +382,7 @@ useEffect(() => {
               // Botones en modo de edición
               <>
                 <button className="update" onClick={handleSaveCategoryChanges}>Guardar</button>
-                <button className="cancel" onClick={() => setIsEditing(false)}>
+                <button className="delete" onClick={() => setIsEditing(false)}>
                   Cancelar
                 </button>
               </>

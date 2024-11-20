@@ -76,15 +76,8 @@ const Login = () => {
 
           <div className="textDiv">
             <h4 className="title">
-              ¡Descubre la forma más cómoda y segura de comprar productos tecnológicos con nuestra página web!
+            Gestiona tu inventario con precisión y lleva la productividad de tu negocio más allá con soluciones tecnológicas innovadoras.
             </h4>
-          </div>
-
-          <div className="footerDiv flex">
-            <span className="text">¿No tienes cuenta aún?</span>
-            <Link to={"/register"}>
-              <button className="btn">Regístrate aquí!</button>
-            </Link>
           </div>
         </div>
 
@@ -131,7 +124,7 @@ const Login = () => {
             </button>
           </form>
 
-          <Link to="/dashboard">Dashboard</Link>
+
         </div>
       </div>
     </div>
