@@ -55,7 +55,6 @@ const CrearCategoria = ({ toggleModalCategoria }) => {
               name="descripcion"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
-              required
             />
           </label>
           <button type="submit" className="add">

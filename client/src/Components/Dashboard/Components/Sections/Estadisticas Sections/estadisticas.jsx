@@ -21,20 +21,24 @@ const Estadisticas = () => {
           acc[ingreso.productoNombre] = (acc[ingreso.productoNombre] || 0) + ingreso.total;
           return acc;
         }, {});
-        const productoLabels = Object.keys(ingresosPorProducto);
-        const productoIngresos = Object.values(ingresosPorProducto);
+
+        // Ordenar los productos por ingresos de mayor a menor
+        const sortedProductoLabels = Object.keys(ingresosPorProducto).sort(
+          (a, b) => ingresosPorProducto[b] - ingresosPorProducto[a]
+        );
+        const sortedProductoIngresos = sortedProductoLabels.map(label => ingresosPorProducto[label]);
 
         // Generar colores dinámicamente
-        const colores = productoLabels.map(
+        const colores = sortedProductoLabels.map(
           () => `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`
         );
 
         setProductIncomeData({
-          labels: productoLabels,
+          labels: sortedProductoLabels,
           datasets: [
             {
-              label: 'Ingresos por Producto ($)',
-              data: productoIngresos,
+              label: 'Ingresos por Producto (COP)',
+              data: sortedProductoIngresos,
               backgroundColor: colores,
               borderColor: colores.map(color => color.replace('0.5', '1')), // Borde más sólido
               borderWidth: 1,
@@ -79,7 +83,7 @@ const Estadisticas = () => {
           labels: balanceMensual.labels,
           datasets: [
             {
-              label: 'Balance Mensual (Ingresos - Egresos)',
+              label: 'Balance Mensual (Ingresos - Egresos) (COP)',
               data: balanceMensual.data,
               fill: false,
               borderColor: 'rgba(75, 192, 192, 1)',
@@ -96,6 +100,14 @@ const Estadisticas = () => {
     fetchData();
   }, []);
 
+  // Función para formatear el valor en pesos colombianos
+  const formatToCOP = (value) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+    }).format(value);
+  };
+
   if (!productIncomeData || !monthlyBalanceData) {
     return <p>Cargando datos...</p>;
   }
@@ -105,13 +117,43 @@ const Estadisticas = () => {
       {/* Gráfico de balance mensual */}
       <div className="chartContainer">
         <h2>BALANCE MENSUAL</h2>
-        <Line data={monthlyBalanceData} />
+        <Line 
+          data={monthlyBalanceData} 
+          options={{
+            plugins: {
+              tooltip: {
+                position: 'nearest', // Hacer que el tooltip esté encima del punto
+                callbacks: {
+                  label: (context) => {
+                    const value = context.raw;
+                    return `Balance: ${formatToCOP(value)}`; // Mostrar en pesos colombianos
+                  },
+                },
+              },
+            },
+          }} 
+        />
       </div>
 
       {/* Gráfico de ingresos por producto */}
       <div className="chartContainer">
         <h2>INGRESOS GENERADOS POR PRODUCTO</h2>
-        <Bar data={productIncomeData} />
+        <Bar 
+          data={productIncomeData} 
+          options={{
+            plugins: {
+              tooltip: {
+                position: 'nearest', // Hacer que el tooltip esté encima del punto
+                callbacks: {
+                  label: (context) => {
+                    const value = context.raw;
+                    return `Ingreso: ${formatToCOP(value)}`; // Mostrar en pesos colombianos
+                  },
+                },
+              },
+            },
+          }} 
+        />
       </div>
     </div>
   );
