@@ -10,14 +10,14 @@ const Listing = () => {
         <p>NOTAS DE VERSIÓN (PROYECTO EN DESARROLLO)</p>
         <p>VERSION 1.0 (BETA):</p>
         <ul>
-          <li>Vistas Agregadas:
+          <li><b>Vistas Agregadas:</b>
             <ul>
               <li>Vista de Inventario</li>
               <li>Vista de Balance</li>
               <li>Vista de Estadísticas</li>
             </ul>
           </li>
-          <li>Funcionalidades Agregadas:
+          <li><b>Funcionalidades Agregadas:</b>
             <ul>
               <li>Categorías:
                 <ul>
