@@ -1,68 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import 'chart.js/auto';
-import { getProducts } from '../../../../../api/productService';
 import { getIngresos, getEgresos } from '../../../../../api/movimientosService';
-import { getCategories } from '../../../../../api/categoryService';
-import './estadisticas.css'
+import './estadisticas.css';
 
 const Estadisticas = () => {
-  const [productData, setProductData] = useState(null);
-  const [categoryData, setCategoryData] = useState(null);
-  const [monthlyBalanceData, setMonthlyBalanceData] = useState(null); // Estado para balance mensual
+  const [productIncomeData, setProductIncomeData] = useState(null); // Gráfica de ingresos por producto
+  const [monthlyBalanceData, setMonthlyBalanceData] = useState(null); // Gráfica de balance mensual
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Llamadas a las APIs
-        const [productsResponse, ingresosResponse, egresosResponse, categoriesResponse] = await Promise.all([
-          getProducts(),
-          getIngresos(),
-          getEgresos(),
-          getCategories(),
-        ]);
+        const [ingresosResponse, egresosResponse] = await Promise.all([getIngresos(), getEgresos()]);
 
-        // Procesar productos
-        const products = productsResponse.data;
-        const productLabels = products.map((product) => product.nombre);
-        const productSales = products.map((product) => product.cantidad * product.precioDeVenta);
-
-        setProductData({
-          labels: productLabels,
-          datasets: [
-            {
-              label: 'Ventas de Productos',
-              data: productSales,
-              backgroundColor: productLabels.map(() => 'rgba(54, 162, 235, 0.2)'),
-              borderColor: productLabels.map(() => 'rgba(54, 162, 235, 1)'),
-              borderWidth: 1,
-            },
-          ],
-        });
-
-        // Procesar ingresos por producto
+        // Procesar ingresos para los productos
         const ingresos = ingresosResponse.data;
-        const ingresoAgrupado = ingresos.reduce((acc, ingreso) => {
+
+        const ingresosPorProducto = ingresos.reduce((acc, ingreso) => {
           acc[ingreso.productoNombre] = (acc[ingreso.productoNombre] || 0) + ingreso.total;
           return acc;
         }, {});
-        const ingresoLabels = Object.keys(ingresoAgrupado);
-        const ingresoTotals = Object.values(ingresoAgrupado);
+        const productoLabels = Object.keys(ingresosPorProducto);
+        const productoIngresos = Object.values(ingresosPorProducto);
 
-        setCategoryData({
-          labels: ingresoLabels,
+        // Generar colores dinámicamente
+        const colores = productoLabels.map(
+          () => `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`
+        );
+
+        setProductIncomeData({
+          labels: productoLabels,
           datasets: [
             {
-              label: 'Ingresos por Producto',
-              data: ingresoTotals,
-              backgroundColor: ingresoLabels.map(() => 'rgba(255, 159, 64, 0.2)'),
-              borderColor: ingresoLabels.map(() => 'rgba(255, 159, 64, 1)'),
+              label: 'Ingresos por Producto ($)',
+              data: productoIngresos,
+              backgroundColor: colores,
+              borderColor: colores.map(color => color.replace('0.5', '1')), // Borde más sólido
               borderWidth: 1,
             },
           ],
         });
 
-        // Procesar ingresos y egresos por mes para calcular el balance mensual
+        // Procesar ingresos y egresos para balance mensual
         const egresos = egresosResponse.data;
 
         const calcularBalanceMensual = () => {
@@ -116,7 +96,7 @@ const Estadisticas = () => {
     fetchData();
   }, []);
 
-  if (!productData || !categoryData || !monthlyBalanceData) {
+  if (!productIncomeData || !monthlyBalanceData) {
     return <p>Cargando datos...</p>;
   }
 
@@ -128,10 +108,10 @@ const Estadisticas = () => {
         <Line data={monthlyBalanceData} />
       </div>
 
-      {/* Gráfico de ventas de productos */}
+      {/* Gráfico de ingresos por producto */}
       <div className="chartContainer">
-        <h2>TOTAL DE VENTAS POR PRODUCTO</h2>
-        <Bar data={productData} />
+        <h2>INGRESOS GENERADOS POR PRODUCTO</h2>
+        <Bar data={productIncomeData} />
       </div>
     </div>
   );
