@@ -52,18 +52,6 @@ const Sidebar = () => {
 
           <li className="listItem">
             <NavLink
-              to="/dashboard/balance"
-              className={({ isActive }) =>
-                isActive ? "menuLink flex active" : "menuLink flex"
-              }
-            >
-              <FaBalanceScale className="icon" />
-              <h3 className="smallText">Balance</h3>
-            </NavLink>
-          </li>
-
-          <li className="listItem">
-            <NavLink
               to="/dashboard/inventario"
               className={({ isActive }) =>
                 isActive ? "menuLink flex active" : "menuLink flex"
@@ -71,6 +59,18 @@ const Sidebar = () => {
             >
               <GoChecklist className="icon" />
               <h3 className="smallText">Inventario</h3>
+            </NavLink>
+          </li>
+
+          <li className="listItem">
+            <NavLink
+              to="/dashboard/balance"
+              className={({ isActive }) =>
+                isActive ? "menuLink flex active" : "menuLink flex"
+              }
+            >
+              <FaBalanceScale className="icon" />
+              <h3 className="smallText">Balance</h3>
             </NavLink>
           </li>
 
