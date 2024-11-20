@@ -231,6 +231,7 @@ const Balance = () => {
   const handleEgresoSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Recorre los productos y valida que se pueda realizar la operación
       for (const producto of productos) {
         const categoria = Object.keys(productosData).find((cat) =>
           productosData[cat].some((p) => p.nombre === producto.productoNombre)
@@ -238,17 +239,20 @@ const Balance = () => {
         const productoSeleccionado = productosData[categoria]?.find(
           (p) => p.nombre === producto.productoNombre
         );
-
-        if (productoSeleccionado?.cantidad <= 0) {
+  
+        // Aquí se verifica si el producto tiene stock
+        // Solo se muestra la alerta si el stock es 0 y el egreso intenta restar
+        if (productoSeleccionado?.cantidad <= 0 && producto.cantidad < 0) {
           Swal.fire({
             icon: 'error',
             title: 'Producto sin stock',
             text: `El producto ${producto.productoNombre} no tiene unidades disponibles.`,
           });
-          return;
+          return; // Detenemos la ejecución si no hay stock para un egreso
         }
       }
-
+  
+      // Enviar el egreso (sin validación de stock para agregar)
       await createEgreso(productos);
       setVentaExitosa(true);
       toggleModalEgreso();
@@ -269,6 +273,7 @@ const Balance = () => {
       });
     }
   };
+  
 
 
 
